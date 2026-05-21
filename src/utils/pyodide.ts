@@ -43,7 +43,10 @@ export async function runPythonCode(code: string, testData: string): Promise<{
   const plots: string[] = [];
   
   try {
-    const result = await pyodideInstance.runPythonAsync(`
+    // 安全地设置全局变量
+    pyodideInstance.globals.set('user_code', code);
+    
+    const wrapperCode = `
 import sys
 import io
 import base64
@@ -54,36 +57,43 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # Capture output
-output_buffer = io.StringIO()
-error_buffer = io.StringIO()
-sys.stdout = output_buffer
-sys.stderr = error_buffer
+_output_buf = io.StringIO()
+_error_buf = io.StringIO()
+_old_stdout = sys.stdout
+_old_stderr = sys.stderr
+sys.stdout = _output_buf
+sys.stderr = _error_buf
 
 try:
-    ${code.replace(/`/g, '\\`')}
-except Exception as e:
-    print(f"Error: {e}", file=sys.stderr)
+    exec(user_code, globals(), globals())
+except Exception as _e:
     import traceback
-    traceback.print_exc()
+    print(f"Error: {_e}", file=_error_buf)
+    traceback.print_exc(file=_error_buf)
+finally:
+    sys.stdout = _old_stdout
+    sys.stderr = _old_stderr
 
 # Get output
-captured_output = output_buffer.getvalue()
-captured_error = error_buffer.getvalue()
+_output = _output_buf.getvalue()
+_error = _error_buf.getvalue()
 
 # Try to get plot
-plot_data = ''
+_plot_data = ''
 try:
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
-    buf.seek(0)
-    plot_data = base64.b64encode(buf.read()).decode('utf-8')
+    _buf = io.BytesIO()
+    plt.savefig(_buf, format='png', dpi=100, bbox_inches='tight')
+    _buf.seek(0)
+    _plot_data = base64.b64encode(_buf.read()).decode('utf-8')
     plt.close('all')
 except:
     pass
 
 # Return results
-{'output': captured_output, 'error': captured_error, 'plot': plot_data}
-`);
+{'output': _output, 'error': _error, 'plot': _plot_data}
+`;
+    
+    const result = await pyodideInstance.runPythonAsync(wrapperCode);
     
     output = result.get('output', '');
     error = result.get('error', '');
