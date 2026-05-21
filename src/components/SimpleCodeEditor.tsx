@@ -12,7 +12,7 @@ const SimpleCodeEditor: React.FC<SimpleCodeEditorProps> = ({ initialCode, soluti
 import numpy as np
 
 # 创建一个简单的DataFrame
-data = {'name': ['Alice', 'Bob', 'Charlie', 'David'], 'age': [25, 30, 35, 28], 'score': [85, 92, 78, 95]}
+data = {'姓名': ['张三', '李四', '王五', '赵六'], '年龄': [25, 30, 35, 28], '成绩': [85, 92, 78, 95]}
 df = pd.DataFrame(data)
 
 print("数据预览:")
