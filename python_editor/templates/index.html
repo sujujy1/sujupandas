@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python数据分析在线编辑器</title>
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+    
+    <style>
+        /* ==================== 全局样式 ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #1e1e2e;
+            --bg-secondary: #282a36;
+            --bg-tertiary: #44475a;
+            --text-primary: #f8f8f2;
+            --text-secondary: #6272a4;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --success: #50fa7b;
+            --error: #ff5555;
+            --warning: #f1fa8c;
+            --border-color: #44475a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* ==================== 主布局 ==================== */
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* ==================== 左侧工具栏 ==================== */
+        .toolbar {
+            width: 50px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            border-right: 1px solid var(--border-color);
+            z-index: 100;
+        }
+        
+        .toolbar-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .toolbar-btn:hover {
+            background: var(--bg-tertiary);
+            transform: scale(1.1);
+        }
+        
+        .toolbar-btn.run-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #00d26a 100%);
+            color: #000;
+        }
+        
+        .toolbar-btn.run-btn:hover {
+            box-shadow: 0 0 15px var(--success);
+        }
+        
+        .toolbar-btn.run-btn.running {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Tooltip样式 */
+        .toolbar-btn::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 55px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toolbar-btn:hover::after {
+            opacity: 1;
+        }
+        
+        /* 下拉菜单 */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            left: 55px;
+            top: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .dropdown-item-title {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .dropdown-item-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        /* ==================== 编辑器区域 ==================== */
+        .editor-panel {
+            flex: 6;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+        
+        .editor-header {
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .editor-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .editor-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .editor-wrapper {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* CodeMirror样式覆盖 */
+        .CodeMirror {
+            height: 100% !important;
+            font-size: 14px;
+            line-height: 1.6;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        
+        .CodeMirror-gutters {
+            background: var(--bg-secondary) !important;
+            border-right: 1px solid var(--border-color) !important;
+        }
+        
+        /* ==================== 结果面板 ==================== */
+        .result-panel {
+            flex: 4;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border-color);
+        }
+        
+        .result-header {
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .result-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .execution-time {
+            font-size: 12px;
+            color: var(--accent-primary);
+        }
+        
+        /* 输出控制台 */
+        .output-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .console-output {
+            flex: 1;
+            background: #0d0d0d;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .output-line {
+            margin-bottom: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .output-line.stdout {
+            color: #f8f8f2;
+        }
+        
+        .output-line.stderr {
+            color: var(--error);
+        }
+        
+        .output-line.success {
+            color: var(--success);
+        }
+        
+        .output-timestamp {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-right: 10px;
+        }
+        
+        /* 图表展示区 */
+        .charts-container {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .charts-header {
+            padding: 8px 15px;
+            background: var(--bg-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .charts-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .charts-nav {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .charts-nav-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .charts-nav-btn:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .charts-display {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+        
+        .chart-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .chart-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .no-charts {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* ==================== 数据集预览 ==================== */
+        .dataset-preview {
+            display: none;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            max-height: 200px;
+            overflow: auto;
+        }
+        
+        .dataset-preview.show {
+            display: block;
+        }
+        
+        .dataset-preview table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .dataset-preview th,
+        .dataset-preview td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .dataset-preview th {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+            position: sticky;
+            top: 0;
+        }
+        
+        .dataset-preview tr:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        /* ==================== 图片弹窗 ==================== */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-modal.show {
+            display: flex;
+        }
+        
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+        
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        
+        /* ==================== 拖拽上传区域 ==================== */
+        .drop-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.2);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+            pointer-events: none;
+        }
+        
+        .drop-zone.active {
+            display: flex;
+        }
+        
+        .drop-zone-content {
+            background: var(--bg-secondary);
+            padding: 40px 60px;
+            border-radius: 15px;
+            border: 2px dashed var(--accent-primary);
+            text-align: center;
+        }
+        
+        .drop-zone-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        /* ==================== 响应式设计 ==================== */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .toolbar {
+                width: 100%;
+                height: 50px;
+                flex-direction: row;
+                justify-content: center;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .toolbar-btn {
+                margin: 0 5px;
+            }
+            
+            .toolbar-btn::after {
+                left: 50%;
+                transform: translateX(-50%);
+                top: 55px;
+            }
+            
+            .dropdown-content {
+                left: 50%;
+                transform: translateX(-50%);
+                top: 55px;
+            }
+            
+            .editor-panel,
+            .result-panel {
+                flex: none;
+                width: 100%;
+            }
+            
+            .editor-panel {
+                height: 50%;
+            }
+            
+            .result-panel {
+                height: 50%;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+        }
+        
+        /* ==================== 滚动条样式 ==================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+        
+        /* ==================== 加载动画 ==================== */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧工具栏 -->
+        <div class="toolbar">
+            <button class="toolbar-btn run-btn" id="runBtn" data-tooltip="运行代码 (Ctrl+Enter)" onclick="runCode()">▶</button>
+            <button class="toolbar-btn" data-tooltip="清空输出" onclick="clearOutput()">🗑</button>
+            
+            <div class="dropdown">
+                <button class="toolbar-btn" data-tooltip="加载示例代码">📁</button>
+                <div class="dropdown-content" id="examplesDropdown"></div>
+            </div>
+            
+            <div class="dropdown">
+                <button class="toolbar-btn" data-tooltip="导入数据集">📊</button>
+                <div class="dropdown-content" id="datasetsDropdown"></div>
+            </div>
+            
+            <button class="toolbar-btn" data-tooltip="导出结果CSV" onclick="exportCSV()">📤</button>
+            <button class="toolbar-btn" data-tooltip="切换主题" onclick="toggleTheme()">🎨</button>
+            <button class="toolbar-btn" data-tooltip="下载代码" onclick="downloadCode()">⬇</button>
+        </div>
+        
+        <!-- 编辑器区域 -->
+        <div class="editor-panel">
+            <div class="editor-header">
+                <span class="editor-title">📝 Python代码编辑器</span>
+                <span class="editor-status" id="editorStatus">就绪</span>
+            </div>
+            
+            <!-- 数据集预览 -->
+            <div class="dataset-preview" id="datasetPreview">
+                <table id="datasetTable"></table>
+            </div>
+            
+            <div class="editor-wrapper">
+                <textarea id="codeEditor"></textarea>
+            </div>
+        </div>
+        
+        <!-- 结果面板 -->
+        <div class="result-panel">
+            <div class="result-header">
+                <span class="result-title">📊 运行结果</span>
+                <span class="execution-time" id="executionTime"></span>
+            </div>
+            
+            <div class="output-container">
+                <!-- 输出控制台 -->
+                <div class="console-output" id="consoleOutput">
+                    <div class="output-line success">欢迎使用Python数据分析在线编辑器！</div>
+                    <div class="output-line">点击左侧 ▶ 按钮或按 Ctrl+Enter 运行代码</div>
+                </div>
+                
+                <!-- 图表展示区 -->
+                <div class="charts-container">
+                    <div class="charts-header">
+                        <span class="charts-title">📈 图表展示</span>
+                        <div class="charts-nav">
+                            <button class="charts-nav-btn" onclick="prevChart()">◀</button>
+                            <span id="chartIndex">0/0</span>
+                            <button class="charts-nav-btn" onclick="nextChart()">▶</button>
+                            <button class="charts-nav-btn" onclick="downloadChart()">💾</button>
+                        </div>
+                    </div>
+                    <div class="charts-display" id="chartsDisplay">
+                        <span class="no-charts">暂无图表</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片弹窗 -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <button class="image-modal-close">×</button>
+        <img id="modalImage" src="" alt="放大图片">
+    </div>
+    
+    <!-- 拖拽上传区域 -->
+    <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-content">
+            <div class="drop-zone-icon">📄</div>
+            <div>释放文件以导入CSV数据</div>
+        </div>
+    </div>
+    
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    
+    <script>
+        // ==================== 全局变量 ====================
+        let editor;
+        let currentChartIndex = 0;
+        let charts = [];
+        let isDarkTheme = true;
+        
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initEditor();
+            loadExamples();
+            loadDatasets();
+            setupDragDrop();
+            setupKeyboardShortcuts();
+            loadSavedCode();
+        });
+        
+        // 初始化CodeMirror编辑器
+        function initEditor() {
+            editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+                mode: 'python',
+                theme: 'dracula',
+                lineNumbers: true,
+                indentUnit: 4,
+                tabSize: 4,
+                indentWithTabs: false,
+                lineWrapping: true,
+                matchBrackets: true,
+                autoCloseBrackets: true,
+                extraKeys: {
+                    'Tab': function(cm) {
+                        cm.replaceSelection('    ', 'end');
+                    }
+                }
+            });
+            
+            // 自动保存代码
+            editor.on('change', function() {
+                localStorage.setItem('savedCode', editor.getValue());
+            });
+        }
+        
+        // 加载保存的代码
+        function loadSavedCode() {
+            const savedCode = localStorage.getItem('savedCode');
+            if (savedCode) {
+                editor.setValue(savedCode);
+            } else {
+                // 默认代码
+                editor.setValue(`# Python数据分析在线编辑器
+# 支持pandas, numpy, matplotlib, seaborn
+
+import pandas as pd
+import numpy as np
+
+# 示例：创建一个简单的DataFrame
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie', 'David'],
+    'age': [25, 30, 35, 28],
+    'score': [85, 92, 78, 95]
+})
+
+print("数据预览:")
+print(df)
+print("\\n统计信息:")
+print(df.describe())
+`);
+            }
+        }
+        
+        // ==================== 代码执行 ====================
+        async function runCode() {
+            const code = editor.getValue();
+            const runBtn = document.getElementById('runBtn');
+            const statusEl = document.getElementById('editorStatus');
+            
+            if (!code.trim()) {
+                addOutput('错误：代码为空', 'stderr');
+                return;
+            }
+            
+            // 显示运行状态
+            runBtn.classList.add('running');
+            runBtn.innerHTML = '<div class="spinner"></div>';
+            statusEl.textContent = '运行中...';
+            
+            try {
+                const response = await fetch('/run', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+                
+                const result = await response.json();
+                
+                // 显示输出
+                if (result.output) {
+                    addOutput(result.output, 'stdout');
+                }
+                
+                // 显示错误
+                if (result.error) {
+                    addOutput(result.error, 'stderr');
+                }
+                
+                // 显示图片
+                if (result.images && result.images.length > 0) {
+                    displayCharts(result.images);
+                }
+                
+                // 显示执行时间
+                if (result.execution_time) {
+                    document.getElementById('executionTime').textContent = 
+                        `执行时间: ${result.execution_time}s`;
+                }
+                
+            } catch (error) {
+                addOutput(`请求失败: ${error.message}`, 'stderr');
+            } finally {
+                runBtn.classList.remove('running');
+                runBtn.innerHTML = '▶';
+                statusEl.textContent = '就绪';
+            }
+        }
+        
+        // ==================== 输出控制台 ====================
+        function addOutput(text, type = 'stdout') {
+            const console = document.getElementById('consoleOutput');
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            
+            // 添加时间戳
+            const timestamp = new Date().toLocaleTimeString();
+            line.innerHTML = `<span class="output-timestamp">[${timestamp}]</span>${escapeHtml(text)}`;
+            
+            console.appendChild(line);
+            console.scrollTop = console.scrollHeight;
+        }
+        
+        function clearOutput() {
+            const console = document.getElementById('consoleOutput');
+            console.innerHTML = '<div class="output-line success">输出已清空</div>';
+            charts = [];
+            currentChartIndex = 0;
+            updateChartDisplay();
+            document.getElementById('executionTime').textContent = '';
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ==================== 图表展示 ====================
+        function displayCharts(images) {
+            charts = images;
+            currentChartIndex = 0;
+            updateChartDisplay();
+            addOutput(`生成了 ${images.length} 张图表`, 'success');
+        }
+        
+        function updateChartDisplay() {
+            const display = document.getElementById('chartsDisplay');
+            const indexEl = document.getElementById('chartIndex');
+            
+            if (charts.length === 0) {
+                display.innerHTML = '<span class="no-charts">暂无图表</span>';
+                indexEl.textContent = '0/0';
+                return;
+            }
+            
+            const img = document.createElement('img');
+            img.className = 'chart-image';
+            img.src = `data:image/png;base64,${charts[currentChartIndex]}`;
+            img.onclick = () => showImageModal(charts[currentChartIndex]);
+            
+            display.innerHTML = '';
+            display.appendChild(img);
+            indexEl.textContent = `${currentChartIndex + 1}/${charts.length}`;
+        }
+        
+        function prevChart() {
+            if (charts.length === 0) return;
+            currentChartIndex = (currentChartIndex - 1 + charts.length) % charts.length;
+            updateChartDisplay();
+        }
+        
+        function nextChart() {
+            if (charts.length === 0) return;
+            currentChartIndex = (currentChartIndex + 1) % charts.length;
+            updateChartDisplay();
+        }
+        
+        function downloadChart() {
+            if (charts.length === 0) {
+                addOutput('没有可下载的图表', 'stderr');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.href = `data:image/png;base64,${charts[currentChartIndex]}`;
+            link.download = `chart_${Date.now()}.png`;
+            link.click();
+            addOutput('图表已下载', 'success');
+        }
+        
+        // 图片弹窗
+        function showImageModal(imageData) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('modalImage');
+            img.src = `data:image/png;base64,${imageData}`;
+            modal.classList.add('show');
+        }
+        
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('show');
+        }
+        
+        // ==================== 示例代码 ====================
+        async function loadExamples() {
+            try {
+                const response = await fetch('/api/examples');
+                const data = await response.json();
+                
+                const dropdown = document.getElementById('examplesDropdown');
+                dropdown.innerHTML = '';
+                
+                data.examples.forEach((example, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.innerHTML = `
+                        <div class="dropdown-item-title">${example.name}</div>
+                        <div class="dropdown-item-desc">${example.description}</div>
+                    `;
+                    item.onclick = () => loadExample(example.code);
+                    dropdown.appendChild(item);
+                });
+            } catch (error) {
+                console.error('加载示例失败:', error);
+            }
+        }
+        
+        function loadExample(code) {
+            editor.setValue(code);
+            addOutput('已加载示例代码', 'success');
+        }
+        
+        // ==================== 数据集 ====================
+        async function loadDatasets() {
+            try {
+                const response = await fetch('/api/datasets');
+                const data = await response.json();
+                
+                const dropdown = document.getElementById('datasetsDropdown');
+                dropdown.innerHTML = '';
+                
+                data.datasets.forEach(dataset => {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.innerHTML = `
+                        <div class="dropdown-item-title">${dataset.name}</div>
+                        <div class="dropdown-item-desc">${dataset.rows}行 × ${dataset.columns}列 | ${dataset.size}</div>
+                    `;
+                    item.onclick = () => importDataset(dataset.name);
+                    dropdown.appendChild(item);
+                });
+            } catch (error) {
+                console.error('加载数据集列表失败:', error);
+            }
+        }
+        
+        async function importDataset(name) {
+            try {
+                const response = await fetch(`/api/dataset/${name}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    addOutput(data.error, 'stderr');
+                    return;
+                }
+                
+                // 在编辑器中添加读取代码
+                const code = `# 已导入数据集: ${name}\ndf = pd.read_csv('${name}.csv')\nprint(df.head())\n`;
+                editor.setValue(code + editor.getValue());
+                
+                // 显示数据预览
+                showDatasetPreview(data);
+                
+                addOutput(`已导入数据集: ${name} (${data.shape[0]}行 × ${data.shape[1]}列)`, 'success');
+            } catch (error) {
+                addOutput(`导入数据集失败: ${error.message}`, 'stderr');
+            }
+        }
+        
+        function showDatasetPreview(data) {
+            const preview = document.getElementById('datasetPreview');
+            const table = document.getElementById('datasetTable');
+            
+            // 创建表头
+            let html = '<thead><tr>';
+            data.columns.forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            // 创建表体
+            data.data.forEach(row => {
+                html += '<tr>';
+                data.columns.forEach(col => {
+                    html += `<td>${row[col] !== null ? row[col] : 'NaN'}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            
+            table.innerHTML = html;
+            preview.classList.add('show');
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                preview.classList.remove('show');
+            }, 5000);
+        }
+        
+        // ==================== 导出功能 ====================
+        function exportCSV() {
+            addOutput('导出CSV功能：请在代码中使用 df.to_csv("output.csv") 保存数据', 'stdout');
+        }
+        
+        function downloadCode() {
+            const code = editor.getValue();
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `code_${Date.now()}.py`;
+            link.click();
+            URL.revokeObjectURL(url);
+            addOutput('代码已下载', 'success');
+        }
+        
+        // ==================== 主题切换 ====================
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            
+            if (isDarkTheme) {
+                document.documentElement.style.setProperty('--bg-primary', '#1e1e2e');
+                document.documentElement.style.setProperty('--bg-secondary', '#282a36');
+                document.documentElement.style.setProperty('--text-primary', '#f8f8f2');
+                editor.setOption('theme', 'dracula');
+            } else {
+                document.documentElement.style.setProperty('--bg-primary', '#f5f5f5');
+                document.documentElement.style.setProperty('--bg-secondary', '#ffffff');
+                document.documentElement.style.setProperty('--text-primary', '#333333');
+                editor.setOption('theme', 'default');
+            }
+            
+            addOutput(`已切换到${isDarkTheme ? '深色' : '浅色'}主题`, 'success');
+        }
+        
+        // ==================== 拖拽上传 ====================
+        function setupDragDrop() {
+            const dropZone = document.getElementById('dropZone');
+            
+            document.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('active');
+            });
+            
+            document.addEventListener('dragleave', (e) => {
+                if (e.relatedTarget === null) {
+                    dropZone.classList.remove('active');
+                }
+            });
+            
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('active');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+        }
+        
+        function handleFileUpload(file) {
+            if (!file.name.endsWith('.csv')) {
+                addOutput('只支持CSV文件', 'stderr');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const code = `# 已导入文件: ${file.name}\ndf = pd.read_csv('${file.name}')\nprint(df.head())\n`;
+                editor.setValue(code + editor.getValue());
+                addOutput(`已导入文件: ${file.name}`, 'success');
+            };
+            reader.readAsText(file);
+        }
+        
+        // ==================== 键盘快捷键 ====================
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+Enter 运行代码
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    runCode();
+                }
+                
+                // Ctrl+S 保存代码
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    localStorage.setItem('savedCode', editor.getValue());
+                    addOutput('代码已保存', 'success');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
