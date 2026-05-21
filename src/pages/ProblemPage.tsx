@@ -278,14 +278,14 @@ const ProblemPage: React.FC = () => {
 
               {/* 右侧：代码编辑器区域 */}
               <div 
-                className="bg-slate-50 rounded-xl p-4 border border-slate-100 overflow-hidden flex flex-col"
+                className="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col"
                 style={{ flexBasis: `${100 - splitPosition}%`, minWidth: '35%', maxWidth: '75%' }}
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                   <Terminal className="w-5 h-5 text-blue-500 mr-2" />
                   代码编辑器
                 </h3>
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1">
                   <SimpleCodeEditor solution={problem.solution} />
                 </div>
               </div>

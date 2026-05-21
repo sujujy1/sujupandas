@@ -185,7 +185,7 @@ print(df.describe())`;
 
       <div 
         ref={containerRef}
-        className="flex h-[600px]"
+        className="flex h-full"
       >
         {/* 代码编辑区 */}
         <div 
