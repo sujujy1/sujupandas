@@ -11,7 +11,7 @@ const ProblemPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   // 可拖动分隔线状态
-  const [splitPosition, setSplitPosition] = useState(35); // 默认左侧占35%
+  const [splitPosition, setSplitPosition] = useState(20); // 默认左侧占20%，代码编辑器占80%
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
