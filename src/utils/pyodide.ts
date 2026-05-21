@@ -1,112 +1,170 @@
-// 使用Flask后端执行Python代码
+import { loadPyodide } from 'pyodide';
 
-// 执行Python代码并返回结果
+let pyodide: any = null;
+let isLoading = false;
+
+export async function initializePyodide(): Promise<void> {
+  if (pyodide) return;
+  if (isLoading) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return initializePyodide();
+  }
+  
+  isLoading = true;
+  try {
+    console.log('正在加载 Pyodide...');
+    pyodide = await loadPyodide({
+      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/',
+      stdout: (text: string) => console.log('Python stdout:', text),
+      stderr: (text: string) => console.log('Python stderr:', text),
+    });
+    
+    await pyodide.loadPackage(['pandas', 'numpy', 'matplotlib']);
+    console.log('Pyodide 初始化完成！');
+  } finally {
+    isLoading = false;
+  }
+}
+
 export async function runPythonCode(code: string, testData: string): Promise<{
   output: string;
   error: string;
   plots: string[];
 }> {
-  try {
-    console.log('准备调用Flask后端，代码长度:', code.length);
-    
-    // 调用Flask后端API
-    const response = await fetch('http://localhost:5000/run', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code: code }),
-      mode: 'cors',
-      credentials: 'omit',
-    });
-
-    console.log('响应状态:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('HTTP错误:', response.status, errorText);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('Flask返回结果:', result);
-
-    return {
-      output: result.output || '',
-      error: result.error || '',
-      plots: result.images || [],
-    };
-  } catch (error: any) {
-    // 如果后端服务不可用，模拟输出
-    console.error('Flask后端服务调用失败:', error.message || error);
-    console.warn('使用模拟输出');
-    return simulateOutput(code);
-  }
-}
-
-// 模拟输出（当Flask后端不可用时）
-function simulateOutput(code: string): {
-  output: string;
-  error: string;
-  plots: string[];
-} {
+  await initializePyodide();
+  
   let output = '';
+  let error = '';
+  const plots: string[] = [];
+  
+  try {
+    const capturedOutput: string[] = [];
+    const capturedError: string[] = [];
+    
+    const setupCode = `
+import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+import base64
+import warnings
+warnings.filterwarnings('ignore')
 
-  // 模拟一些基本的输出
-  if (code.includes('print')) {
-    output += '输出:\n';
-  }
-  if (code.includes('df.head')) {
-    output += '   姓名  年龄  成绩\n0  张三  18  85\n1  李四  19  92\n2  王五  20  78\n';
-  }
-  if (code.includes('df.info')) {
-    output += `<class 'pandas.core.frame.DataFrame'>\nRangeIndex: 5 entries, 0 to 4\nData columns (total 3 columns)\n`;
-  }
-  if (code.includes('df.shape')) {
-    output += 'DataFrame形状: (5, 3)\n';
-  }
-  if (code.includes('sum') || code.includes('mean') || code.includes('median')) {
-    output += '计算结果: 85.0\n';
-  }
+def display_plot():
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+    buf.seek(0)
+    img_data = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close('all')
+    return img_data
 
-  return {
-    output,
-    error: '',
-    plots: [],
-  };
+def print(*args, sep=' ', end='\\n'):
+    result = sep.join(str(arg) for arg in args) + end
+    __pyodide_output_buffer__.append(result)
+
+def sys_stdout_write(text):
+    __pyodide_output_buffer__.append(text)
+
+def sys_stderr_write(text):
+    __pyodide_error_buffer__.append(text)
+`;
+    
+    await pyodide.runPythonAsync(setupCode);
+    
+    pyodide.globals.set('__pyodide_output_buffer__', []);
+    pyodide.globals.set('__pyodide_error_buffer__', []);
+    
+    pyodide.runPython(`
+import sys
+sys.stdout = type('Dummy', (), {'write': sys_stdout_write, 'flush': lambda: None})
+sys.stderr = type('Dummy', (), {'write': sys_stderr_write, 'flush': lambda: None})
+`);
+    
+    const fullCode = setupCode + '\n' + code;
+    
+    await pyodide.runPythonAsync(fullCode);
+    
+    output = pyodide.globals.get('__pyodide_output_buffer__').join('');
+    error = pyodide.globals.get('__pyodide_error_buffer__').join('');
+    
+    try {
+      const plotResult = await pyodide.runPythonAsync('display_plot()');
+      if (plotResult && typeof plotResult === 'string' && plotResult.length > 0) {
+        plots.push(plotResult);
+      }
+    } catch (plotErr) {
+      console.log('No plot generated or plot error:', plotErr);
+    }
+    
+  } catch (err: any) {
+    error = err.message || String(err);
+    console.error('Python执行错误:', error);
+  }
+  
+  return { output, error, plots };
 }
 
-// 验证代码输出
 export function validateOutput(output: string, expectedOutput: string): number {
-  // 简单的验证逻辑，实际项目中可能需要更复杂的验证
   if (output.includes(expectedOutput)) {
-    return 10; // 满分
+    return 10;
   } else if (output.length > 0) {
-    return 5; // 部分分数
+    return 5;
   }
-  return 0; // 零分
+  return 0;
 }
 
-// 获取可用数据集列表
 export async function getDatasets(): Promise<any[]> {
-  try {
-    const response = await fetch('http://localhost:5000/api/datasets');
-    const data = await response.json();
-    return data.datasets || [];
-  } catch (error) {
-    console.error('获取数据集失败:', error);
-    return [];
-  }
+  return [
+    { name: 'iris', rows: 150, columns: 5, size: '4.1KB' },
+    { name: 'titanic', rows: 891, columns: 15, size: '61.2KB' },
+    { name: 'tips', rows: 244, columns: 7, size: '7.2KB' },
+  ];
 }
 
-// 获取示例代码列表
 export async function getExamples(): Promise<any[]> {
-  try {
-    const response = await fetch('http://localhost:5000/api/examples');
-    const data = await response.json();
-    return data.examples || [];
-  } catch (error) {
-    console.error('获取示例代码失败:', error);
-    return [];
-  }
+  return [
+    {
+      name: '数据探索',
+      description: '探索数据集的基本信息',
+      code: `import pandas as pd
+
+df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
+
+print("数据形状:", df.shape)
+print("\\n数据类型:\\n", df.dtypes)
+print("\\n统计描述:\\n", df.describe())
+print("\\n前5行:\\n", df.head())`,
+    },
+    {
+      name: '分组分析',
+      description: '按组分析数据特征',
+      code: `import pandas as pd
+
+df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/titanic.csv')
+
+print("各舱位存活率:\\n", df.groupby('pclass')['survived'].mean())
+print("\\n性别存活率:\\n", df.groupby('sex')['survived'].mean())`,
+    },
+    {
+      name: '数据可视化',
+      description: '创建图表展示数据',
+      code: `import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+df['sepal_length'].hist(ax=axes[0])
+axes[0].set_title('Sepal Length Distribution')
+
+df.plot(kind='scatter', x='sepal_length', y='sepal_width', ax=axes[1])
+axes[1].set_title('Sepal Length vs Width')
+
+plt.tight_layout()
+plt.show()`,
+    },
+  ];
 }

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, RotateCcw, Code, Terminal, Lightbulb, X, GripVertical } from 'lucide-react';
+import { runPythonCode } from '../utils/pyodide';
 
 interface SimpleCodeEditorProps {
   initialCode?: string;
@@ -25,6 +26,7 @@ print(df.describe())`;
   const [isRunning, setIsRunning] = useState(false);
   const [executionTime, setExecutionTime] = useState(0);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
+  const [isLoadingPyodide, setIsLoadingPyodide] = useState(false);
   
   // 可拖动分隔线状态
   const [splitPosition, setSplitPosition] = useState(50); // 默认50%
@@ -41,31 +43,27 @@ print(df.describe())`;
     setIsRunning(true);
     setOutput('');
     setError('');
+    setIsLoadingPyodide(true);
 
     try {
       const startTime = Date.now();
-      const response = await fetch('/run', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code }),
-      });
-
-      const result = await response.json();
+      
+      const result = await runPythonCode(code, '');
+      
       const endTime = Date.now();
 
       setExecutionTime((endTime - startTime) / 1000);
       setOutput(result.output || '');
       setError(result.error || '');
 
-      if (result.images && result.images.length > 0) {
-        setOutput(prev => prev + `\n生成了 ${result.images.length} 张图表`);
+      if (result.plots && result.plots.length > 0) {
+        setOutput(prev => prev + `\n生成了 ${result.plots.length} 张图表`);
       }
     } catch (err) {
-      setError(`请求失败: ${(err as Error).message}`);
+      setError(`执行失败: ${(err as Error).message}`);
     } finally {
       setIsRunning(false);
+      setIsLoadingPyodide(false);
     }
   };
 
@@ -163,9 +161,14 @@ print(df.describe())`;
           <button
             onClick={handleRun}
             className="flex items-center px-4 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg hover:shadow-green-500/25 transition-all text-sm font-medium"
-            disabled={isRunning}
+            disabled={isRunning || isLoadingPyodide}
           >
-            {isRunning ? (
+            {isLoadingPyodide ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5"></div>
+                加载Python环境...
+              </>
+            ) : isRunning ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5"></div>
                 运行中...
