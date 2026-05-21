@@ -11,13 +11,13 @@ const SimpleCodeEditor: React.FC<SimpleCodeEditorProps> = ({ initialCode, soluti
   const defaultCode = `import pandas as pd
 import numpy as np
 
-# 创建一个简单的DataFrame
-data = {'姓名': ['张三', '李四', '王五', '赵六'], '年龄': [25, 30, 35, 28], '成绩': [85, 92, 78, 95]}
+# Create a simple DataFrame
+data = {'name': ['Alice', 'Bob', 'Charlie', 'David'], 'age': [25, 30, 35, 28], 'score': [85, 92, 78, 95]}
 df = pd.DataFrame(data)
 
-print("数据预览:")
+print("Data Preview:")
 print(df)
-print("统计信息:")
+print("\\nStatistics:")
 print(df.describe())`;
 
   const [code, setCode] = useState(initialCode || defaultCode);
