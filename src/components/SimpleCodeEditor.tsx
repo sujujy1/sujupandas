@@ -195,7 +195,7 @@ print(df.describe())`;
           <textarea
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="w-full h-full p-4 font-mono text-sm bg-slate-900 text-emerald-400 resize-none focus:outline-none placeholder-slate-500"
+            className="w-full h-full p-4 font-mono text-sm bg-slate-900 text-emerald-400 resize-none focus:outline-none placeholder-slate-500 overflow-auto"
             placeholder="在此输入Python代码..."
             spellCheck={false}
           />
