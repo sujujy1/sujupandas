@@ -83,19 +83,25 @@ rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=
 print(rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']])`,
     learningContent: {
       concept: "购物篮分析",
-      explanation: "购物篮分析发现商品间的关联规则，用于推荐系统和促销策略。核心概念包括支持度、置信度和提升度，常用Apriori算法挖掘频繁项集。",
+      explanation: "购物篮分析通过分析顾客的购买行为，发现商品之间的关联关系。它是数据挖掘中的经典应用，广泛用于零售行业的商品推荐、促销策略制定和货架摆放优化。核心概念包括支持度、置信度和提升度，常用Apriori算法挖掘频繁项集和关联规则。",
       keyPoints: [
-        "支持度：商品组合出现的频率",
-        "置信度：买了A后也买B的条件概率",
-        "提升度：规则的有效性，大于1才有价值",
-        "Apriori算法：先找频繁项集，再生成规则",
-        "购物篮矩阵：0-1编码的商品购买情况"
+        "支持度(Support)：商品组合在所有交易中出现的频率，衡量商品组合的普遍性",
+        "置信度(Confidence)：买了A后也买B的条件概率P(B|A)，衡量规则的可靠性",
+        "提升度(Lift)：规则的有效性，Lift>1表示A和B正相关，Lift=1表示独立",
+        "Apriori算法：先找频繁项集（支持度达标），再从中生成关联规则",
+        "购物篮矩阵：0-1编码的商品购买情况，每行是一个订单",
+        "频繁项集：支持度大于最小阈值的商品组合",
+        "关联规则：形如A→B的规则，表示购买A的顾客很可能购买B",
+        "前件(antecedent)：规则左边的商品集合，后件(consequent)：规则右边的商品"
       ],
       examples: [
         "创建购物篮矩阵：df.groupby(['订单','商品'])['商品'].count().unstack().fillna(0)",
-        "转换为0-1编码：basket.map(lambda x: 1 if x>0 else 0)",
+        "转换为0-1编码：basket = basket.map(lambda x: 1 if x>0 else 0)",
         "找频繁项集：apriori(basket, min_support=0.5, use_colnames=True)",
-        "生成规则：association_rules(frequent_itemsets, metric='confidence', min_threshold=0.7)"
+        "生成规则：association_rules(frequent_itemsets, metric='confidence', min_threshold=0.7)",
+        "筛选有效规则：rules[rules['lift'] > 1]",
+        "按提升度排序：rules.sort_values('lift', ascending=False)",
+        "查看关键指标：rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']]"
       ]
     },
     questions: [
@@ -160,19 +166,25 @@ else:
     print("两组转化率无显著差异")`,
     learningContent: {
       concept: "A/B测试分析",
-      explanation: "A/B测试通过对照实验比较两个版本的效果，核心是假设检验，判断差异是真实存在还是随机波动。常用指标包括转化率、p值和置信区间。",
+      explanation: "A/B测试通过对照实验比较两个版本的效果，是互联网产品优化的核心方法。核心是统计假设检验，判断观察到的差异是真实存在还是随机波动。常用指标包括转化率、p值、置信区间和统计功效。",
       keyPoints: [
-        "原假设：两组无差异；备择假设：两组有差异",
-        "p值<0.05通常认为差异统计显著",
-        "卡方检验适合比较两组转化率",
-        "显著性水平α一般设为0.05",
-        "置信区间显示真实差异的可能范围"
+        "原假设(H0)：两组无差异；备择假设(H1)：两组有差异",
+        "p值<0.05通常认为差异统计显著，拒绝原假设",
+        "卡方检验适合比较两组或多组的分类数据（如转化率）",
+        "显著性水平α一般设为0.05，表示愿意接受的假阳性概率",
+        "置信区间显示真实差异的可能范围，常用95%置信度",
+        "统计功效(Power)：检测到真实差异的概率，通常需要达到80%以上",
+        "第一类错误(Type I)：假阳性，原假设真但被拒绝",
+        "第二类错误(Type II)：假阴性，原假设假但未被拒绝"
       ],
       examples: [
-        "计算转化率：df.groupby('组')['转化'].agg(['sum','count']).apply(lambda x: x['sum']/x['count'])",
-        "卡方检验：chi2_contingency(pd.crosstab(df['组'], df['转化']))",
-        "结论判断：if p_value < 0.05: print('显著差异')",
-        "列联表：pd.crosstab(df['组别'], df['转化'])"
+        "计算转化率：conversion = df.groupby('组')['转化'].agg(['sum','count']); conversion['率'] = conversion['sum']/conversion['count']",
+        "创建列联表：cross_tab = pd.crosstab(df['组别'], df['转化'])",
+        "卡方检验：chi2, p_value, dof, expected = chi2_contingency(cross_tab)",
+        "结论判断：print('显著差异' if p_value < 0.05 else '无显著差异')",
+        "计算相对提升：(b_conversion - a_conversion) / a_conversion",
+        "可视化结果：使用柱状图展示两组转化率",
+        "样本量计算：使用power analysis确定所需样本数"
       ]
     },
     questions: [
@@ -244,19 +256,26 @@ principal_components = pca.fit_transform(features)
 print(f"解释方差比: {pca.explained_variance_ratio_}")`,
     learningContent: {
       concept: "特征工程",
-      explanation: "特征工程是从原始数据构造有效特征的过程，直接影响模型性能。包括特征创建、特征编码、特征缩放、特征选择和降维等步骤。",
+      explanation: "特征工程是从原始数据构造有效特征的过程，是机器学习中最重要的步骤之一，直接影响模型性能。包括特征创建、特征编码、特征缩放、特征选择和降维等步骤，需要结合领域知识和数据理解。",
       keyPoints: [
-        "特征创建：基于业务知识生成新特征",
-        "独热编码：将类别特征转为多个0-1列",
-        "标准化/归一化：将特征缩放到相同尺度",
-        "PCA：无监督降维方法，保留主要方差",
-        "特征选择：移除冗余或无用特征"
+        "特征创建：基于业务知识生成新特征，如比率特征、聚合特征、时间特征",
+        "独热编码：将类别特征转为多个0-1列，适合无序类别",
+        "标签编码：将类别映射为整数，适合有序类别",
+        "标准化(StandardScaler)：将数据缩放到均值为0、方差为1",
+        "归一化(MinMaxScaler)：将数据缩放到[0,1]范围",
+        "PCA：无监督降维方法，保留数据的主要方差",
+        "特征选择：移除冗余或无用特征，常用方法有相关性分析、方差阈值、递归特征消除",
+        "特征交叉：将多个特征组合产生新特征"
       ],
       examples: [
-        "创建特征：df['收入/年龄'] = df['收入'] / df['年龄']",
-        "独热编码：pd.get_dummies(df, columns=['类别'])",
-        "标准化：StandardScaler().fit_transform(df[['数值列']])",
-        "PCA降维：PCA(n_components=2).fit_transform(features)"
+        "创建比率特征：df['收入/年龄'] = df['收入'] / df['年龄']",
+        "创建分箱特征：df['年龄段'] = pd.cut(df['年龄'], bins=[0,30,45,60], labels=['青年','中年','老年'])",
+        "独热编码：pd.get_dummies(df, columns=['性别', '年龄段'])",
+        "标准化：scaler = StandardScaler(); df[['年龄', '收入']] = scaler.fit_transform(df[['年龄', '收入']])",
+        "PCA降维：pca = PCA(n_components=2); principal_components = pca.fit_transform(features)",
+        "特征选择：from sklearn.feature_selection import SelectKBest, f_regression",
+        "特征交叉：df['性别_年龄'] = df['性别'] + '_' + df['年龄段']",
+        "计算统计特征：df.groupby('用户')['消费'].agg(['mean', 'sum', 'count'])"
       ]
     },
     questions: [
@@ -328,19 +347,26 @@ print("处理后的数据:")
 print(df_clean)`,
     learningContent: {
       concept: "异常值检测",
-      explanation: "异常值是显著偏离其他观测值的数据点，可能影响统计分析和模型性能。常用检测方法包括IQR方法和Z-score方法，可视化常用箱线图。",
+      explanation: "异常值是显著偏离其他观测值的数据点，可能由于数据录入错误、测量误差或真实的极端情况导致。异常值会严重影响统计分析结果和机器学习模型性能，因此检测和处理异常值是数据预处理的重要步骤。",
       keyPoints: [
-        "IQR方法：Q1-1.5×IQR到Q3+1.5×IQR外为异常值",
-        "Z-score方法：|Z|>3通常视为异常值",
-        "箱线图直观展示异常值分布",
-        "处理方式：删除、截断、或用中位数填充",
-        "分析异常值产生的原因很重要"
+        "IQR方法：Q1-1.5×IQR到Q3+1.5×IQR之外的数据视为异常值",
+        "Z-score方法：|Z|>3通常视为异常值，适用于近似正态分布的数据",
+        "箱线图：直观展示数据分布和异常值位置",
+        "处理方式：删除、截断(winsorize)、用中位数填充、或单独分析",
+        "分析异常值产生的原因很重要，决定处理策略",
+        "对于偏态数据，IQR方法比Z-score更稳健",
+        "可视化方法：箱线图、散点图、直方图",
+        "统计方法：IQR、Z-score、DBSCAN聚类"
       ],
       examples: [
-        "IQR计算：IQR = Q3 - Q1",
-        "Z-score：z = (x - mean) / std",
-        "箱线图：plt.boxplot(df['列'])",
-        "移除异常值：df[(df['列'] >= lower) & (df['列'] <= upper)]"
+        "IQR计算：Q1 = df['列'].quantile(0.25); Q3 = df['列'].quantile(0.75); IQR = Q3 - Q1",
+        "计算边界：lower = Q1 - 1.5 * IQR; upper = Q3 + 1.5 * IQR",
+        "Z-score计算：z_scores = (df['列'] - df['列'].mean()) / df['列'].std()",
+        "箱线图：plt.boxplot(df['列']); plt.title('数据箱线图'); plt.show()",
+        "识别异常值：outliers = df[(df['列'] < lower) | (df['列'] > upper)]",
+        "移除异常值：df_clean = df[(df['列'] >= lower) & (df['列'] <= upper)]",
+        "截断处理：df['列'] = np.clip(df['列'], lower, upper)",
+        "中位数填充：df['列'].fillna(df['列'].median())"
       ]
     },
     questions: [
@@ -377,18 +403,26 @@ print(df.head())
 print("数据形状:", df.shape)`,
     learningContent: {
       concept: "DataFrame基础概念",
-      explanation: "DataFrame是Pandas中最核心的数据结构，可以理解为一个表格型的数据结构，类似于Excel表格或SQL表。它由行和列组成，每列可以是不同的数据类型（数值、字符串、布尔值等）。",
+      explanation: "DataFrame是Pandas中最核心的数据结构，可以理解为一个表格型的数据结构，类似于Excel表格或SQL表。它由行和列组成，每列可以是不同的数据类型（数值、字符串、布尔值等）。DataFrame是数据分析的基础，几乎所有的Pandas操作都围绕DataFrame展开。",
       keyPoints: [
-        "DataFrame是二维表格数据结构",
-        "每列可以是不同的数据类型",
-        "可以通过字典、列表、NumPy数组等方式创建",
-        "支持索引和标签访问"
+        "DataFrame是二维表格数据结构，由行（索引）和列组成",
+        "每列可以是不同的数据类型：整数、浮点数、字符串、日期时间等",
+        "可以通过字典、列表、NumPy数组、CSV文件等多种方式创建",
+        "支持通过标签和位置两种方式访问数据",
+        "自动对齐索引，方便数据操作和分析",
+        "支持向量化运算，性能优异",
+        "可以方便地进行数据筛选、排序、分组、合并等操作"
       ],
       examples: [
         "创建DataFrame: df = pd.DataFrame({'列名': [值1, 值2, ...]})",
-        "查看前几行: df.head()",
+        "查看前5行: df.head()",
+        "查看后5行: df.tail()",
         "查看数据信息: df.info()",
-        "查看数据形状: df.shape"
+        "查看数据形状: df.shape",
+        "查看列名: df.columns",
+        "查看索引: df.index",
+        "查看数据类型: df.dtypes",
+        "查看统计摘要: df.describe()"
       ]
     },
     questions: [
@@ -486,18 +520,26 @@ result = df[(df['年龄'] > 18) & (df['成绩'] >= 85)]
 print("年龄>18且成绩>=85:", result)`,
     learningContent: {
       concept: "数据筛选与布尔索引",
-      explanation: "数据筛选是数据分析中最常用的操作之一。在Pandas中，可以使用布尔索引来筛选满足特定条件的数据。布尔索引是指使用布尔值数组来选择DataFrame中的行或列。",
+      explanation: "数据筛选是数据分析中最常用的操作之一。在Pandas中，可以使用布尔索引来筛选满足特定条件的数据。布尔索引是指使用布尔值数组来选择DataFrame中的行或列。掌握数据筛选是进行数据探索和分析的基础技能。",
       keyPoints: [
-        "布尔索引使用条件表达式返回布尔值数组",
-        "多个条件需要用 & (与) 和 | (或) 连接",
-        "条件必须用括号包裹",
-        ".loc[] 可以同时选择行和列"
+        "布尔索引使用条件表达式返回布尔值数组，True表示选中，False表示排除",
+        "多个条件需要用 & (与) 和 | (或) 连接，不能使用Python的and/or",
+        "每个条件必须用括号单独包裹，否则会出现运算优先级问题",
+        ".loc[] 可以同时选择行和列，是最常用的数据选择方法",
+        ".iloc[] 按位置选择数据，使用整数索引",
+        "字符串筛选可以使用 .str.contains() 方法",
+        "缺失值筛选使用 .isnull() 和 .notnull()",
+        "使用 .isin() 可以筛选在指定列表中的值"
       ],
       examples: [
-        "单条件筛选: df[df['列名'] > 值]",
-        "多条件与: df[(df['列1'] > 值1) & (df['列2'] < 值2)]",
-        "多条件或: df[(df['列1'] > 值1) | (df['列2'] < 值2)]",
-        "使用loc: df.loc[条件, ['列1', '列2']]"
+        "单条件筛选: df[df['年龄'] > 18]",
+        "多条件与: df[(df['年龄'] > 18) & (df['成绩'] >= 85)]",
+        "多条件或: df[(df['成绩'] >= 90) | (df['成绩'] < 60)]",
+        "使用loc选择行列: df.loc[df['年龄'] > 18, ['姓名', '成绩']]",
+        "字符串包含: df[df['姓名'].str.contains('张')]",
+        "缺失值筛选: df[df['成绩'].notnull()]",
+        "列表匹配: df[df['班级'].isin(['一班', '二班'])]",
+        "范围筛选: df[df['成绩'].between(80, 90)]"
       ]
     },
     questions: [
@@ -535,18 +577,27 @@ print("按成绩降序:", df.sort_values('成绩', ascending=False))
 print("按年龄升、成绩降:", df.sort_values(['年龄', '成绩'], ascending=[True, False]))`,
     learningContent: {
       concept: "列操作与数据排序",
-      explanation: "列操作是指对DataFrame的列进行增删改查操作，而数据排序则是按照指定列的值对数据进行排列。这是数据分析中常用的基础操作。",
+      explanation: "列操作是指对DataFrame的列进行增删改查操作，而数据排序则是按照指定列的值对数据进行排列。这是数据分析中常用的基础操作，掌握这些技能可以让你灵活地处理和整理数据。",
       keyPoints: [
-        "使用 df['新列名'] = 值 添加新列",
-        ".apply() 可以对列应用自定义函数",
-        ".sort_values() 用于数据排序",
-        "可以按多列排序，每列可以指定不同的排序方向"
+        "使用 df['新列名'] = 值 添加新列，支持直接赋值或计算",
+        ".apply() 可以对Series的每个元素应用自定义函数",
+        ".sort_values() 用于按指定列排序数据",
+        "可以按多列排序，每列可以指定不同的排序方向（升序/降序）",
+        ".sort_index() 按索引排序",
+        "可以使用自定义函数进行复杂排序",
+        "排序时可以指定缺失值的处理方式",
+        "列操作还包括删除列、重命名列、复制列等"
       ],
       examples: [
         "添加新列: df['新列'] = 值",
-        "应用函数: df['列'].apply(lambda x: ...)",
-        "单列排序: df.sort_values('列名', ascending=False)",
-        "多列排序: df.sort_values(['列1', '列2'], ascending=[True, False])"
+        "创建计算列: df['总分'] = df['语文'] + df['数学'] + df['英语']",
+        "应用函数: df['成绩等级'] = df['成绩'].apply(lambda x: 'A' if x >= 90 else 'B')",
+        "单列排序: df.sort_values('成绩', ascending=False)",
+        "多列排序: df.sort_values(['年龄', '成绩'], ascending=[True, False])",
+        "按索引排序: df.sort_index(ascending=False)",
+        "删除列: df.drop('列名', axis=1)",
+        "重命名列: df.rename(columns={'旧名': '新名'})",
+        "复制列: df['新列'] = df['旧列'].copy()"
       ]
     },
     questions: [
@@ -589,18 +640,28 @@ print("填充后:")
 print(df_filled)`,
     learningContent: {
       concept: "缺失值处理",
-      explanation: "缺失值是数据中常见的问题，可能由于数据采集不完整或错误导致。Pandas提供了多种方法来检测和处理缺失值，包括删除、填充等策略。",
+      explanation: "缺失值是数据中常见的问题，可能由于数据采集不完整、传感器故障、用户跳过填写等原因导致。缺失值会影响数据分析和机器学习模型的性能，因此正确处理缺失值是数据预处理的重要步骤。Pandas提供了多种方法来检测和处理缺失值。",
       keyPoints: [
-        ".isnull() 检测缺失值，返回布尔值",
-        ".notnull() 检测非缺失值",
-        ".dropna() 删除包含缺失值的行或列",
-        ".fillna() 填充缺失值，可以用均值、中位数、固定值等"
+        ".isnull() 检测缺失值，返回布尔值DataFrame",
+        ".notnull() 检测非缺失值，与isnull()相反",
+        ".dropna() 删除包含缺失值的行或列，可指定阈值",
+        ".fillna() 填充缺失值，支持多种填充策略",
+        "df.isnull().sum() 统计每列缺失值数量",
+        "向前填充(method='ffill')和向后填充(method='bfill')",
+        "使用插值方法填充: .interpolate()",
+        "根据业务逻辑自定义填充策略"
       ],
       examples: [
         "检测缺失值: df.isnull()",
+        "统计缺失数: df.isnull().sum()",
         "删除缺失行: df.dropna()",
+        "删除缺失列: df.dropna(axis=1)",
+        "至少保留3个非缺失值: df.dropna(thresh=3)",
         "用均值填充: df.fillna(df.mean())",
-        "用固定值填充: df.fillna(0)"
+        "用中位数填充: df.fillna(df.median())",
+        "向前填充: df.fillna(method='ffill')",
+        "向后填充: df.fillna(method='bfill')",
+        "线性插值: df.interpolate()"
       ]
     },
     questions: [
@@ -641,18 +702,26 @@ print("按年龄多聚合函数:")
 print(df.groupby('年龄')['成绩'].agg(['count', 'mean', 'max', 'min']))`,
     learningContent: {
       concept: "数据分组与聚合",
-      explanation: "分组与聚合是数据分析的核心操作，通过groupby将数据按某个维度分组，然后对每组应用聚合函数（如平均值、计数、求和等），从而快速洞察数据分布规律。",
+      explanation: "分组与聚合是数据分析的核心操作，通过groupby将数据按某个维度分组，然后对每组应用聚合函数（如平均值、计数、求和等），从而快速洞察数据分布规律。这是从数据中提取业务洞察的关键技能。",
       keyPoints: [
-        ".groupby()创建分组对象，指定分组列",
-        ".agg()可接收字典为不同列指定不同聚合函数",
-        "可对同一列同时应用多个聚合函数",
-        "支持多列分组，按组合维度分析数据"
+        ".groupby()创建分组对象，指定分组列，支持单列和多列分组",
+        ".agg()可接收字典为不同列指定不同聚合函数，非常灵活",
+        "可对同一列同时应用多个聚合函数，如count、mean、max、min",
+        "支持多列分组，按组合维度分析数据，如按班级和性别分组",
+        ".apply()可以对分组应用自定义函数，实现复杂计算",
+        ".filter()可以根据组内条件过滤分组",
+        ".transform()可以对每组进行转换操作",
+        "分组后可以使用.reset_index()将索引转换为列"
       ],
       examples: [
         "单分组单聚合: df.groupby('列1')['列2'].mean()",
         "多聚合字典: df.groupby('列1').agg({'列2': 'sum', '列3': 'mean'})",
         "多列分组: df.groupby(['列1', '列2'])['列3'].agg(['count', 'mean'])",
-        "命名聚合结果: df.groupby('列1').agg(平均值=('列2', 'mean'), 最大值=('列2', 'max'))"
+        "命名聚合结果: df.groupby('列1').agg(平均值=('列2', 'mean'), 最大值=('列2', 'max'))",
+        "自定义函数: df.groupby('列1')['列2'].apply(lambda x: x.max() - x.min())",
+        "过滤分组: df.groupby('列1').filter(lambda x: len(x) >= 3)",
+        "转换操作: df.groupby('列1')['列2'].transform(lambda x: x - x.mean())",
+        "重置索引: df.groupby('列1')['列2'].mean().reset_index()"
       ]
     },
     questions: [
@@ -701,19 +770,28 @@ print("concat连接:")
 print(pd.concat([df1, df2], axis=1))`,
     learningContent: {
       concept: "数据合并与连接",
-      explanation: "数据合并与连接是数据处理中常见的操作，merge()用于按键值合并（类似SQL的join），concat()用于按轴方向拼接数据。",
+      explanation: "数据合并与连接是数据处理中常见的操作，在实际数据分析中，我们经常需要将多个数据源合并在一起进行分析。merge()用于按键值合并（类似SQL的join），concat()用于按轴方向拼接数据。掌握这些技能可以让你灵活地整合多个数据源。",
       keyPoints: [
-        "pd.merge()支持多种连接方式：inner(内连接), left(左连接), right(右连接), outer(外连接)",
-        "on参数指定合并的键，left_on和right_on可分别指定左右表的键",
-        "pd.concat()的axis参数控制拼接方向，0是纵向，1是横向",
-        "可以使用suffixes参数处理重名列名冲突"
+        "pd.merge()支持多种连接方式：inner(内连接), left(左连接), right(右连接), outer(外连接), cross(交叉连接)",
+        "on参数指定合并的键，left_on和right_on可分别指定左右表的键（当键名不同时）",
+        "pd.concat()的axis参数控制拼接方向，axis=0是纵向拼接，axis=1是横向拼接",
+        "可以使用suffixes参数处理重名列名冲突，默认是['_x', '_y']",
+        "pd.merge()还支持按索引合并（left_index=True, right_index=True）",
+        "validate参数可以验证合并关系（one_to_one, one_to_many, many_to_one, many_to_many）",
+        "df.join()是一种简化的合并方式，主要用于按索引合并",
+        "合并时可以使用sort参数控制结果是否排序"
       ],
       examples: [
         "内连接: pd.merge(df1, df2, on='键')",
         "左连接: pd.merge(df1, df2, on='键', how='left')",
+        "右连接: pd.merge(df1, df2, on='键', how='right')",
         "外连接: pd.merge(df1, df2, on='键', how='outer')",
+        "键名不同: pd.merge(df1, df2, left_on='键1', right_on='键2')",
         "纵向拼接: pd.concat([df1, df2], axis=0)",
-        "横向拼接: pd.concat([df1, df2], axis=1)"
+        "横向拼接: pd.concat([df1, df2], axis=1)",
+        "按索引合并: pd.merge(df1, df2, left_index=True, right_index=True)",
+        "处理重名: pd.merge(df1, df2, on='键', suffixes=('_左', '_右'))",
+        "使用join: df1.join(df2, on='键')"
       ]
     },
     questions: [
@@ -757,19 +835,26 @@ print("多聚合函数:")
 print(pivot3)`,
     learningContent: {
       concept: "数据透视表",
-      explanation: "数据透视表是强大的聚合工具，将数据重新排列以行和列维度展示聚合结果，类似Excel的透视表功能，非常适合多维度分析。",
+      explanation: "数据透视表是强大的聚合工具，将数据重新排列以行和列维度展示聚合结果，类似Excel的透视表功能，非常适合多维度分析。它可以帮助你快速从多个角度分析数据，发现数据中的规律和趋势。",
       keyPoints: [
-        "pivot_table()的index参数指定行维度",
-        "columns参数指定列维度",
-        "values参数指定要聚合的值列",
-        "aggfunc参数指定聚合函数，默认是mean",
-        "fill_value参数可填充NaN"
+        "pivot_table()的index参数指定行维度分组键",
+        "columns参数指定列维度分组键",
+        "values参数指定要聚合的值列，支持多列",
+        "aggfunc参数指定聚合函数，默认是mean，支持多个函数",
+        "fill_value参数可填充NaN为指定值",
+        "margins参数添加边际总计行和列",
+        "margins_name参数自定义总计行/列的名称",
+        "可以同时指定多个行或列维度"
       ],
       examples: [
         "基础透视表: df.pivot_table(values='值', index='行', columns='列', aggfunc='mean')",
         "多聚合函数: df.pivot_table(values='值', index='行', aggfunc=['count', 'mean', 'max'])",
         "填充缺失值: df.pivot_table(values='值', index='行', columns='列', fill_value=0)",
-        "边际总计: df.pivot_table(values='值', index='行', columns='列', margins=True)"
+        "边际总计: df.pivot_table(values='值', index='行', columns='列', margins=True)",
+        "多值列: df.pivot_table(values=['值1', '值2'], index='行', columns='列')",
+        "自定义边际名: df.pivot_table(values='值', index='行', columns='列', margins=True, margins_name='总计')",
+        "多列维度: df.pivot_table(values='值', index='行', columns=['列1', '列2'])",
+        "不同列不同聚合: df.pivot_table(values={'列1': 'sum', '列2': 'mean'}, index='行')"
       ]
     },
     questions: [
@@ -809,20 +894,28 @@ df['移动平均'] = df['销售额'].rolling(window=3).mean()
 print(df)`,
     learningContent: {
       concept: "时间序列处理",
-      explanation: "时间序列是按时间排序的数据序列，Pandas提供了强大的处理工具，包括日期解析、重采样、移动窗口等功能，是金融、销售等领域的必备技能。",
+      explanation: "时间序列是按时间排序的数据序列，在金融、销售、气象等领域非常常见。Pandas提供了强大的时间序列处理工具，包括日期解析、重采样、移动窗口、时间差计算等功能，是进行时间序列分析的必备技能。",
       keyPoints: [
-        "pd.to_datetime()将字符串转换为datetime64类型",
-        "重采样(resample)改变时间频率，如从日到月",
-        "移动窗口(rolling)计算滚动统计量",
-        "常用频率：'D'日, 'W'周, 'ME'月, 'QE'季, 'YE'年",
-        "设置日期为索引便于时间操作"
+        "pd.to_datetime()将字符串转换为datetime64类型，支持多种日期格式",
+        "重采样(resample)改变时间频率，如从日数据聚合到月数据",
+        "移动窗口(rolling)计算滚动统计量，如移动平均",
+        "常用频率代码：'D'日, 'W'周, 'ME'月末, 'QE'季末, 'YE'年末",
+        "设置日期为索引便于进行时间操作和切片",
+        "使用.dt访问器提取日期时间的各个部分（年、月、日、时、分、秒）",
+        "时间差计算产生Timedelta对象，可用于时间运算",
+        "支持日期偏移量，如BusinessDay、MonthEnd等"
       ],
       examples: [
         "转换日期: df['日期'] = pd.to_datetime(df['日期'])",
         "设置索引: df.set_index('日期', inplace=True)",
         "月度求和: df.resample('ME').sum()",
         "3日移动平均: df['值'].rolling(window=3).mean()",
-        "日期切片: df['2023-01':'2023-03']"
+        "日期切片: df['2023-01':'2023-03']",
+        "提取年份: df['日期'].dt.year",
+        "计算日期间隔: df['日期1'] - df['日期2']",
+        "计算累积和: df['值'].cumsum()",
+        "计算同比增长率: df['值'].pct_change(periods=365)",
+        "自定义重采样频率: df.resample('W-FRI').sum()"
       ]
     },
     questions: [
@@ -862,20 +955,26 @@ df['加分后'] = df['成绩'].apply(lambda x: x * 1.05)
 print(df)`,
     learningContent: {
       concept: "数据分箱与Apply函数",
-      explanation: "数据分箱将连续数值离散化为区间，Apply是灵活的数据处理工具，可对Series或DataFrame应用自定义函数，配合lambda实现简洁的单行函数。",
+      explanation: "数据分箱将连续数值离散化为区间，便于进行分组分析和可视化。Apply是灵活的数据处理工具，可对Series或DataFrame应用自定义函数，配合lambda实现简洁的单行函数。这两个工具是数据转换和特征工程的重要手段。",
       keyPoints: [
-        "pd.cut()进行等宽分箱，pd.qcut()进行等频分箱",
-        ".apply()对Series逐元素应用函数",
-        ".apply()对DataFrame按行或列应用函数",
-        "lambda x: ... 定义匿名函数",
-        "分箱后得到Categorical类型"
+        "pd.cut()进行等宽分箱，每个区间宽度相同",
+        "pd.qcut()进行等频分箱，每个区间包含相同数量的数据",
+        ".apply()对Series逐元素应用函数，返回新的Series",
+        ".apply()对DataFrame按行(axis=1)或列(axis=0)应用函数",
+        "lambda x: ... 定义匿名函数，适合简单操作",
+        "分箱后得到Categorical类型，保持区间顺序",
+        ".applymap()对DataFrame的每个元素应用函数",
+        "可以向apply传入自定义函数而非lambda"
       ],
       examples: [
         "等宽分箱: pd.cut(df['列'], bins=5)",
         "等频分箱: pd.qcut(df['列'], q=4)",
-        "带标签分箱: pd.cut(df['列'], bins=[0,60,80,100], labels=['低','中','高'])",
+        "带标签分箱: pd.cut(df['列'], bins=[0,60,80,100], labels=['不及格','及格','优秀'])",
         "Series的apply: df['列'].apply(lambda x: x*2)",
-        "DataFrame按行apply: df.apply(lambda row: row['a']+row['b'], axis=1)"
+        "DataFrame按行apply: df.apply(lambda row: row['a']+row['b'], axis=1)",
+        "自定义函数apply: df['列'].apply(my_function)",
+        "每个元素apply: df.applymap(lambda x: str(x).upper())",
+        "分箱统计: df.groupby(pd.cut(df['列'], bins=5))['值'].mean()"
       ]
     },
     questions: [
@@ -922,20 +1021,27 @@ print("melt转换:")
 print(df.melt(id_vars=['班级', '性别'], var_name='科目', value_name='成绩'))`,
     learningContent: {
       concept: "多重索引与数据重塑",
-      explanation: "多重索引(MultiIndex)支持层次化数据结构，stack/unstack在长和宽格式间转换，melt()将宽表变成长表，这些是数据重塑的核心工具。",
+      explanation: "多重索引(MultiIndex)支持层次化数据结构，可以在一个轴上拥有多个索引级别。stack/unstack在长格式和宽格式间转换，melt()将宽表变成长表。这些是数据重塑的核心工具，用于调整数据结构以适应不同的分析需求。",
       keyPoints: [
-        ".set_index([列1, 列2])创建多重索引",
-        ".stack()将列旋转为行索引，数据变长",
-        ".unstack()将行索引旋转为列，数据变宽",
-        ".melt()将宽格式转为长格式",
-        "level参数指定操作哪一层索引"
+        ".set_index([列1, 列2])创建多重索引，支持单列和多列",
+        ".stack()将列旋转为行索引，数据从宽变长",
+        ".unstack()将行索引旋转为列，数据从长变宽",
+        ".melt()将宽格式转为长格式，便于某些分析和可视化",
+        "level参数指定操作哪一层索引，从0开始计数",
+        ".swaplevel()交换索引层级的顺序",
+        ".sort_index()对多重索引进行排序",
+        "访问多重索引使用元组：df.loc[(值1, 值2)]"
       ],
       examples: [
         "创建多重索引: df.set_index(['a', 'b'])",
         "stack: df.stack()",
         "unstack指定层: df.unstack(level=0)",
         "melt: df.melt(id_vars=['id'], var_name='变量', value_name='值')",
-        "访问多重索引: df.loc[('行值1', '行值2'), '列名']"
+        "访问多重索引: df.loc[('行值1', '行值2'), '列名']",
+        "交换层级: df.swaplevel(0, 1)",
+        "排序索引: df.sort_index(level=0)",
+        "创建MultiIndex对象: pd.MultiIndex.from_tuples([('a', 1), ('a', 2)])",
+        "重命名层级: df.index.set_names(['层1', '层2'])"
       ]
     },
     questions: [
