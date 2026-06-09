@@ -11,13 +11,13 @@ const SimpleCodeEditor: React.FC<SimpleCodeEditorProps> = ({ initialCode, soluti
   const defaultCode = `import pandas as pd
 import numpy as np
 
-# Create a simple DataFrame
 data = {'name': ['Alice', 'Bob', 'Charlie', 'David'], 'age': [25, 30, 35, 28], 'score': [85, 92, 78, 95]}
 df = pd.DataFrame(data)
 
 print("Data Preview:")
 print(df)
-print("\\nStatistics:")
+print("")
+print("Statistics:")
 print(df.describe())`;
 
   const [code, setCode] = useState(initialCode || defaultCode);
@@ -27,11 +27,71 @@ print(df.describe())`;
   const [executionTime, setExecutionTime] = useState(0);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
   const [isLoadingPyodide, setIsLoadingPyodide] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState('');
   
-  // 可拖动分隔线状态（水平方向）
-  const [splitPosition, setSplitPosition] = useState(55); // 默认代码区占55%，输出区占45%
+  // 可拖动分隔线状态（垂直方向 - 左右布局）
+  const [splitPosition, setSplitPosition] = useState(50); // 默认代码区占50%，输出区占50%
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const autoFixCode = (code: string): string => {
+    let fixedCode = code;
+    
+    // 替换中文引号为英文引号
+    fixedCode = fixedCode.replace(/“/g, '"').replace(/”/g, '"');
+    fixedCode = fixedCode.replace(/‘/g, "'").replace(/’/g, "'");
+    
+    // 修复未闭合的字符串
+    const lines = fixedCode.split('\n');
+    let inString = false;
+    let stringChar = '';
+    let escapeNext = false;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      let newLine = '';
+      
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        
+        if (escapeNext) {
+          newLine += char;
+          escapeNext = false;
+          continue;
+        }
+        
+        if (char === '\\') {
+          newLine += char;
+          escapeNext = true;
+          continue;
+        }
+        
+        // 检查字符串开始/结束
+        if ((char === "'" || char === '"')) {
+          if (!inString) {
+            inString = true;
+            stringChar = char;
+          } else if (stringChar === char) {
+            inString = false;
+            stringChar = '';
+          }
+        }
+        
+        newLine += char;
+      }
+      
+      lines[i] = newLine;
+    }
+    
+    // 如果最后还在字符串中，添加缺失的引号
+    if (inString) {
+      lines[lines.length - 1] += stringChar;
+    }
+    
+    fixedCode = lines.join('\n');
+    
+    return fixedCode;
+  };
 
   const handleRun = async () => {
     if (!code.trim()) {
@@ -44,11 +104,16 @@ print(df.describe())`;
     setOutput('');
     setError('');
     setIsLoadingPyodide(true);
+    setLoadingStatus('正在初始化 Python 环境...');
 
     try {
       const startTime = Date.now();
       
-      const result = await runPythonCode(code, '');
+      // 自动修复代码
+      const fixedCode = autoFixCode(code);
+      
+      setLoadingStatus('正在加载 Pandas 和 NumPy 库...');
+      const result = await runPythonCode(fixedCode, '');
       
       const endTime = Date.now();
 
@@ -60,10 +125,17 @@ print(df.describe())`;
         setOutput(prev => prev + `\n生成了 ${result.plots.length} 张图表`);
       }
     } catch (err) {
-      setError(`执行失败: ${(err as Error).message}`);
+      const errorMsg = (err as Error).message;
+      setError(errorMsg);
+      
+      // 如果是超时错误，给用户更友好的提示
+      if (errorMsg.includes('超时')) {
+        setError(errorMsg + '\n\n提示：如果网络较慢，可以刷新页面重试，或者检查代码是否有死循环。');
+      }
     } finally {
       setIsRunning(false);
       setIsLoadingPyodide(false);
+      setLoadingStatus('');
     }
   };
 
@@ -77,7 +149,7 @@ print(df.describe())`;
     setShowSolutionModal(true);
   };
 
-  // 拖动处理函数（垂直方向）
+  // 拖动处理函数（水平方向 - 左右拖动）
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -89,12 +161,12 @@ print(df.describe())`;
     
     const container = containerRef.current;
     const rect = container.getBoundingClientRect();
-    // 减去拖动线高度的一半，使拖动更精确
-    const splitterHeight = 16; // h-4 = 16px
-    const y = e.clientY - rect.top - (splitterHeight / 2);
-    const percentage = (y / (rect.height - splitterHeight)) * 100;
+    // 减去拖动线宽度的一半，使拖动更精确
+    const splitterWidth = 16; // w-4 = 16px
+    const x = e.clientX - rect.left - (splitterWidth / 2);
+    const percentage = (x / (rect.width - splitterWidth)) * 100;
     
-    // 限制最小和最大高度（20% - 80%）
+    // 限制最小和最大宽度（20% - 80%）
     const clampedPercentage = Math.max(20, Math.min(80, percentage));
     setSplitPosition(clampedPercentage);
   }, [isDragging]);
@@ -126,7 +198,7 @@ print(df.describe())`;
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className="rounded-xl overflow-hidden border border-slate-200 shadow-lg">
+    <div className="rounded-xl overflow-hidden border border-slate-200 shadow-lg h-full flex flex-col">
       <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="flex space-x-2">
@@ -163,15 +235,10 @@ print(df.describe())`;
             className="flex items-center px-4 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg hover:shadow-green-500/25 transition-all text-sm font-medium"
             disabled={isRunning || isLoadingPyodide}
           >
-            {isLoadingPyodide ? (
+            {isLoadingPyodide || isRunning ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5"></div>
-                加载Python环境...
-              </>
-            ) : isRunning ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5"></div>
-                运行中...
+                {loadingStatus || '运行中...'}
               </>
             ) : (
               <>
@@ -185,12 +252,12 @@ print(df.describe())`;
 
       <div 
         ref={containerRef}
-        className="flex flex-col h-full"
+        className="flex flex-row h-full"
       >
         {/* 代码编辑区 */}
         <div 
-          className="overflow-hidden"
-          style={{ flexBasis: `${splitPosition}%`, minHeight: '20%', maxHeight: '80%' }}
+          className="overflow-hidden border-r border-slate-700"
+          style={{ flexBasis: `${splitPosition}%`, minWidth: '20%', maxWidth: '80%' }}
         >
           <textarea
             value={code}
@@ -201,10 +268,10 @@ print(df.describe())`;
           />
         </div>
 
-        {/* 可拖动分隔线（水平方向） */}
+        {/* 可拖动分隔线（垂直方向 - 左右拖动） */}
         <div
           className={`
-            h-4 flex-shrink-0 cursor-row-resize
+            w-4 flex-shrink-0 cursor-col-resize
             flex items-center justify-center
             group relative
             ${isDragging ? 'bg-blue-500/30' : 'bg-slate-800 hover:bg-blue-500/20'}
@@ -213,14 +280,14 @@ print(df.describe())`;
         >
           {/* 拖动指示器 */}
           <div className={`
-            h-1 w-20 rounded-full transition-all duration-200
+            w-1 h-20 rounded-full transition-all duration-200
             ${isDragging 
               ? 'bg-blue-400 shadow-lg shadow-blue-400/50' 
               : 'bg-slate-500 group-hover:bg-blue-300 group-hover:shadow-lg group-hover:shadow-blue-300/50'
             }
           `}>
             {/* 点状装饰 */}
-            <div className="absolute inset-0 flex items-center justify-center space-x-2 pointer-events-none">
+            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 pointer-events-none">
               <div className={`w-1.5 h-1.5 rounded-full ${isDragging ? 'bg-white' : 'bg-slate-400 group-hover:bg-white'}`}></div>
               <div className={`w-1.5 h-1.5 rounded-full ${isDragging ? 'bg-white' : 'bg-slate-400 group-hover:bg-white'}`}></div>
               <div className={`w-1.5 h-1.5 rounded-full ${isDragging ? 'bg-white' : 'bg-slate-400 group-hover:bg-white'}`}></div>
@@ -236,14 +303,14 @@ print(df.describe())`;
               : 'bg-slate-700 text-slate-300 border-slate-600 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-400 group-hover:shadow-lg group-hover:shadow-blue-500/50'
             }
           `}>
-            <GripVertical className="w-5 h-5 rotate-90" />
+            <GripVertical className="w-5 h-5" />
           </div>
         </div>
 
         {/* 输出区 */}
         <div 
           className="bg-slate-900 overflow-hidden"
-          style={{ flexBasis: `${100 - splitPosition}%`, minHeight: '20%', maxHeight: '80%' }}
+          style={{ flexBasis: `${100 - splitPosition}%`, minWidth: '20%', maxWidth: '80%' }}
         >
           <div className="bg-slate-800/50 px-4 py-2 border-b border-slate-700 flex items-center justify-between">
             <div className="flex items-center space-x-2 text-slate-400">

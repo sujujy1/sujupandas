@@ -39,10 +39,10 @@ const HomePage: React.FC = () => {
     { icon: Trophy, title: '徽章认证', description: '完成挑战，获得成就徽章' },
   ];
 
-  const difficultyLabels: Record<string, { text: string; color: string; bg: string }> = {
-    easy: { text: '入门', color: 'text-green-700', bg: 'bg-green-100' },
-    medium: { text: '进阶', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-    hard: { text: '高级', color: 'text-red-700', bg: 'bg-red-100' },
+  const difficultyLabels: Record<string, { text: string; color: string; bg: string; cardBorder: string; cardHoverShadow: string }> = {
+    easy: { text: '入门', color: 'text-green-700', bg: 'bg-green-100', cardBorder: 'border-green-200 bg-gradient-to-br from-white to-green-50', cardHoverShadow: 'hover:shadow-green-500/10' },
+    medium: { text: '进阶', color: 'text-yellow-700', bg: 'bg-yellow-100', cardBorder: 'border-yellow-300 bg-gradient-to-br from-white to-yellow-50', cardHoverShadow: 'hover:shadow-yellow-500/20' },
+    hard: { text: '高级', color: 'text-red-700', bg: 'bg-red-100', cardBorder: 'border-red-300 bg-gradient-to-br from-white to-red-50', cardHoverShadow: 'hover:shadow-red-500/20' },
   };
 
   const problemIcons = ['🛒', '📊', '🧹', '📈', '🔍', '🔗', '📋', '⏰', '🎯', '⚡', '🔄', '🔬', '⚙️', '⚠️'];
@@ -137,7 +137,7 @@ const HomePage: React.FC = () => {
                 <Link
                   key={problem.id}
                   to={`/problem/${problem.id}`}
-                  className="block bg-white rounded-xl p-6 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group"
+                  className={`block rounded-xl p-6 hover:shadow-xl ${difficulty.cardHoverShadow} transition-all duration-300 transform hover:-translate-y-2 border-2 group ${difficulty.cardBorder}`}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <span className="text-3xl">{problemIcons[index] || '📊'}</span>
@@ -169,6 +169,49 @@ const HomePage: React.FC = () => {
               );
             })}
           </div>
+        </div>
+
+        {/* 炮塔游戏入口 */}
+        <div className="mb-16">
+          <div className="flex items-center mb-8">
+            <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-4"></div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">函数炮塔大挑战</h2>
+              <p className="text-sm text-gray-500">测试你对 Pandas 函数记忆的综合挑战</p>
+            </div>
+          </div>
+
+          <Link
+            to="/tower-game"
+            className="block bg-gradient-to-br from-purple-600 via-pink-600 to-red-500 rounded-2xl p-8 text-white hover:shadow-2xl hover:shadow-purple-500/40 transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <span className="text-6xl mr-6">⚡👾</span>
+                <div>
+                  <h3 className="text-3xl font-bold mb-3">Pandas 函数炮塔大挑战</h3>
+                  <p className="text-white/90 text-lg mb-3">
+                    怪物入侵！用你的函数知识消灭它们。<br />
+                    底部 5 个炮塔（函数含义）对应 5 个函数名，选中炮塔 → 点击怪物 → 发射！
+                  </p>
+                  <div className="flex items-center space-x-3">
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                      🎯 实时游戏
+                    </span>
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                      🔥 16+ 个函数
+                    </span>
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                      🏆 得分挑战
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="text-5xl group-hover:translate-x-2 transition-transform">
+                →
+              </div>
+            </div>
+          </Link>
         </div>
 
         <div className="mb-16">

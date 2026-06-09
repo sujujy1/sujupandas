@@ -10,6 +10,26 @@ const ProblemPage: React.FC = () => {
   const [problem, setProblem] = useState<typeof problems[0] | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   
+  const getGameName = (id: string) => {
+    const gameNames: Record<string, string> = {
+      '1': '幸运转盘',
+      '2': '跳跳答题',
+      '3': '打地鼠答题',
+      '4': '消消乐答题',
+      '5': '弹球答题',
+      '6': '接水果答题',
+      '7': '迷宫答题',
+      '8': '翻牌答题',
+      '9': '投篮答题',
+      '10': '切切答题',
+      '11': '连线答题',
+      '12': '拼图答题',
+      '13': '抓娃娃答题',
+      '14': '钓鱼答题'
+    };
+    return gameNames[id] || '闯关游戏';
+  };
+  
   // 可拖动分隔线状态
   const [splitPosition, setSplitPosition] = useState(20); // 默认左侧占20%，代码编辑器占80%
   const [isDragging, setIsDragging] = useState(false);
@@ -224,6 +244,37 @@ const ProblemPage: React.FC = () => {
                   </ul>
                 </div>
 
+                {problem.steps && problem.steps.length > 0 && (
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <Target className="w-5 h-5 text-purple-500 mr-2" />
+                      操作流程
+                    </h3>
+                    <div className="space-y-3">
+                      {problem.steps.map((step, index) => (
+                        <div key={step.step} className="flex gap-3">
+                          <div className="flex-shrink-0">
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/25">
+                              {step.step}
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-semibold text-gray-800">{step.title}</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">{step.description}</p>
+                            {step.code && (
+                              <div className="mt-2 px-3 py-2 bg-gray-900 rounded-lg text-sm font-mono text-green-400 overflow-x-auto">
+                                {step.code}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <Code className="w-5 h-5 text-blue-500 mr-2" />
@@ -241,15 +292,30 @@ const ProblemPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 趣味概念学习按钮 */}
+                {problem.puzzlePieces && problem.puzzlePieces.length > 0 && (
+                  <div className="pt-4 border-t border-gray-200">
+                    <Link
+                      to={`/problem/${problem.id}/fun`}
+                      className="block w-full py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl font-bold text-center hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-3 group"
+                    >
+                      <span className="text-2xl group-hover:animate-bounce">🧩</span>
+                      <span className="text-lg">趣味概念学习与函数记忆</span>
+                      <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
+                    </Link>
+                  </div>
+                )}
+
                 {/* 测试按钮 */}
                 {problem.questions && problem.questions.length > 0 && (
                   <div className="pt-4 border-t border-gray-200">
                     <Link
                       to={`/problem/${problem.id}/quiz`}
-                      className="block w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-medium text-center hover:shadow-lg hover:shadow-green-500/30 transition-all duration-300 flex items-center justify-center space-x-2"
+                      className="block w-full py-4 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white rounded-xl font-bold text-center hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300 flex items-center justify-center space-x-3 group"
                     >
-                      <span>📝</span>
-                      <span>开始测试 ({problem.questions.length}题)</span>
+                      <span className="text-2xl group-hover:animate-bounce">🎮</span>
+                      <span className="text-lg">开始游戏 - {getGameName(problem.id)} ({problem.questions.length}关)</span>
+                      <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
                     </Link>
                   </div>
                 )}

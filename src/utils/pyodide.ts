@@ -15,15 +15,26 @@ export async function initializePyodide(): Promise<void> {
   initializationPromise = (async () => {
     try {
       console.log('Loading Pyodide...');
-      pyodideInstance = await loadPyodide({
-        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/',
+      
+      // 增加超时处理
+      const timeoutPromise = new Promise<void>((_, reject) => {
+        setTimeout(() => reject(new Error('Pyodide 加载超时，请检查网络连接或刷新页面重试')), 120000);
       });
+      
+      const loadPromise = loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/',
+        stdout: (text: string) => console.log('[Pyodide]', text),
+        stderr: (text: string) => console.error('[Pyodide]', text),
+      });
+      
+      pyodideInstance = await Promise.race([loadPromise, timeoutPromise]);
       
       console.log('Loading packages...');
       await pyodideInstance.loadPackage(['pandas', 'numpy', 'matplotlib']);
       console.log('Pyodide ready!');
     } catch (error) {
       console.error('Failed to initialize Pyodide:', error);
+      initializationPromise = null; // 重置以便重试
       throw error;
     }
   })();
@@ -43,7 +54,7 @@ export async function runPythonCode(code: string, testData: string): Promise<{
   const plots: string[] = [];
   
   try {
-    // 安全地设置全局变量
+    // 使用安全的方式设置全局变量
     pyodideInstance.globals.set('user_code', code);
     
     const wrapperCode = `
@@ -93,7 +104,13 @@ except:
 {'output': _output, 'error': _error, 'plot': _plot_data}
 `;
     
-    const result = await pyodideInstance.runPythonAsync(wrapperCode);
+    // 增加执行超时（60秒）
+    const executePromise = pyodideInstance.runPythonAsync(wrapperCode);
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('代码执行超时，请检查代码是否有无限循环或复杂计算')), 60000);
+    });
+    
+    const result = await Promise.race([executePromise, timeoutPromise]);
     
     output = result.get('output', '');
     error = result.get('error', '');
@@ -104,7 +121,7 @@ except:
     }
     
   } catch (err: any) {
-    error = `Execution error: ${err.message || String(err)}`;
+    error = `${err.message || String(err)}`;
     console.error('Python execution error:', err);
   }
   
