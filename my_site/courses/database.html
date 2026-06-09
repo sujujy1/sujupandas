@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库原理与应用 - 许振辉个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-semibold text-primary">许振辉</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html#home" class="text-gray-600 hover:text-primary transition-colors">首页</a>
+                <a href="../index.html#about" class="text-gray-600 hover:text-primary transition-colors">关于我</a>
+                <a href="../index.html#courses" class="text-gray-600 hover:text-primary transition-colors">课程</a>
+                <a href="../index.html#contact" class="text-gray-600 hover:text-primary transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <section class="bg-gradient-to-r from-primary to-blue-700 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center mb-6">
+                <a href="../index.html#courses" class="text-white hover:text-gray-200 transition-colors mb-6 inline-flex items-center">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回课程列表
+                </a>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">数据库原理与应用</h1>
+            <p class="text-xl mb-8">学习数据库的基本原理、SQL语言和数据库设计，掌握数据库应用技能</p>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose lg:prose-lg">
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程简介</h2>
+                    <p class="text-gray-700 mb-8">
+                        本课程旨在教授数据库的基本原理和应用技术，帮助学生掌握数据库设计、SQL编程和数据库管理的核心技能。
+                        通过本课程的学习，学生将了解数据库系统的基本概念，掌握关系数据库的设计方法，
+                        能够使用SQL语言进行数据操作，并了解数据库管理和优化的基本方法。
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习内容</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>数据库系统概述</li>
+                        <li>关系数据库基础</li>
+                        <li>SQL语言基础（SELECT、INSERT、UPDATE、DELETE）</li>
+                        <li>SQL高级特性（JOIN、GROUP BY、子查询、窗口函数）</li>
+                        <li>数据库设计（ER模型、关系模式设计）</li>
+                        <li>数据库规范化</li>
+                        <li>数据库索引与优化</li>
+                        <li>事务与并发控制</li>
+                        <li>数据库安全</li>
+                        <li>数据库管理系统（MySQL、PostgreSQL等）</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习目标</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>理解数据库系统的基本概念和原理</li>
+                        <li>掌握关系数据库的设计方法</li>
+                        <li>熟练使用SQL语言进行数据操作</li>
+                        <li>能够设计和实现数据库模式</li>
+                        <li>了解数据库优化和管理的基本方法</li>
+                        <li>能够使用主流数据库管理系统</li>
+                        <li>为数据分析和应用开发打下数据库基础</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程资源</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>推荐书籍：《数据库系统概论》、《SQL必知必会》</li>
+                        <li>在线课程：Coursera上的数据库专项课程</li>
+                        <li>实践平台：MySQL、PostgreSQL</li>
+                        <li>学习社区：Stack Overflow、数据库论坛</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-lg font-semibold">许振辉</p>
+                    <p class="text-gray-400">商务数据分析与应用专业</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 许振辉个人页面. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow');
+            } else {
+                nav.classList.remove('shadow');
+            }
+        });
+    </script>
+</body>
+</html>

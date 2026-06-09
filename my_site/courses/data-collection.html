@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据采集与处理 - 许振辉个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-semibold text-primary">许振辉</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html#home" class="text-gray-600 hover:text-primary transition-colors">首页</a>
+                <a href="../index.html#about" class="text-gray-600 hover:text-primary transition-colors">关于我</a>
+                <a href="../index.html#courses" class="text-gray-600 hover:text-primary transition-colors">课程</a>
+                <a href="../index.html#contact" class="text-gray-600 hover:text-primary transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <section class="bg-gradient-to-r from-primary to-blue-700 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center mb-6">
+                <a href="../index.html#courses" class="text-white hover:text-gray-200 transition-colors mb-6 inline-flex items-center">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回课程列表
+                </a>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">数据采集与处理</h1>
+            <p class="text-xl mb-8">学习如何从各种数据源采集数据，并进行有效的数据处理和转换</p>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose lg:prose-lg">
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程简介</h2>
+                    <p class="text-gray-700 mb-8">
+                        本课程旨在教授数据采集和处理的核心技术，帮助学生掌握从各种数据源获取数据并进行有效处理的能力。
+                        通过本课程的学习，学生将了解不同的数据采集方法，掌握数据清洗、转换和集成的技巧，
+                        为后续的数据分析和建模打下坚实的基础。
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习内容</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>数据采集方法概述</li>
+                        <li>网络爬虫技术（Python Scrapy、BeautifulSoup）</li>
+                        <li>API数据获取</li>
+                        <li>数据库数据提取</li>
+                        <li>文件数据读取（CSV、Excel、JSON等）</li>
+                        <li>数据清洗技术</li>
+                        <li>数据转换与标准化</li>
+                        <li>数据集成与合并</li>
+                        <li>数据质量评估</li>
+                        <li>数据处理自动化</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习目标</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>掌握各种数据采集方法和工具</li>
+                        <li>能够编写网络爬虫获取网页数据</li>
+                        <li>熟练使用API获取数据</li>
+                        <li>掌握数据清洗和预处理技术</li>
+                        <li>能够处理和转换不同格式的数据</li>
+                        <li>确保数据质量和一致性</li>
+                        <li>为数据分析准备高质量的数据集</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程资源</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>推荐书籍：《Python网络爬虫权威指南》、《数据清洗实战》</li>
+                        <li>在线课程：Coursera上的数据采集专项课程</li>
+                        <li>实践平台：Kaggle、GitHub</li>
+                        <li>学习社区：Stack Overflow、数据科学论坛</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-lg font-semibold">许振辉</p>
+                    <p class="text-gray-400">商务数据分析与应用专业</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 许振辉个人页面. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow');
+            } else {
+                nav.classList.remove('shadow');
+            }
+        });
+    </script>
+</body>
+</html>

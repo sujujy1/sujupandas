@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>许振辉 - 个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-xl font-semibold text-primary">许振辉</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="text-gray-600 hover:text-primary transition-colors">首页</a>
+                <a href="#about" class="text-gray-600 hover:text-primary transition-colors">关于我</a>
+                <a href="#courses" class="text-gray-600 hover:text-primary transition-colors">课程</a>
+                <a href="#contact" class="text-gray-600 hover:text-primary transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-gradient-to-r from-primary to-blue-700 text-white py-20">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">许振辉</h1>
+                <h2 class="text-2xl md:text-3xl font-semibold mb-6">商务数据分析与应用专业</h2>
+                <p class="text-lg mb-8">广东科学技术职业学院 · 商学院</p>
+                <div class="flex space-x-4">
+                    <a href="#courses" class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                        查看课程
+                    </a>
+                    <a href="#about" class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-primary transition-colors">
+                        了解更多
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="w-64 h-64 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                    <div class="w-56 h-56 rounded-full bg-gray-200 flex items-center justify-center">
+                        <i class="fa fa-user text-6xl text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">关于我</h2>
+            <div class="max-w-3xl mx-auto bg-gray-50 p-8 rounded-lg shadow-sm">
+                <h3 class="text-xl font-semibold mb-4 text-primary">个人简介</h3>
+                <p class="text-gray-700 mb-6">
+                    我是许振辉，就读于广东科学技术职业学院商学院商务数据分析与应用专业。
+                    我对数据分析和应用领域充满热情，希望通过学习和实践，掌握数据分析的核心技能，
+                    为未来的职业发展打下坚实的基础。
+                </p>
+                <h3 class="text-xl font-semibold mb-4 text-primary">教育背景</h3>
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-start">
+                        <i class="fa fa-graduation-cap text-secondary mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-medium">广东科学技术职业学院</span>
+                            <p class="text-sm text-gray-500">商学院 · 商务数据分析与应用专业 · 2022-至今</p>
+                        </div>
+                    </li>
+                </ul>
+                <h3 class="text-xl font-semibold mt-8 mb-4 text-primary">技能特长</h3>
+                <div class="flex flex-wrap gap-3">
+                    <span class="bg-blue-100 text-primary px-4 py-2 rounded-full text-sm">Python</span>
+                    <span class="bg-green-100 text-secondary px-4 py-2 rounded-full text-sm">数据分析</span>
+                    <span class="bg-purple-100 text-purple-600 px-4 py-2 rounded-full text-sm">数据采集</span>
+                    <span class="bg-yellow-100 text-yellow-600 px-4 py-2 rounded-full text-sm">数据库</span>
+                    <span class="bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm">供应链分析</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">我的课程</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Python基础 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-code text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Python基础</h3>
+                    <p class="text-gray-600 mb-4">学习Python编程语言的基本语法、数据结构和函数，为数据分析打下基础。</p>
+                    <a href="courses/python-basics.html" class="text-primary font-medium flex items-center">
+                        查看详情 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- 数据分析技术 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-line-chart text-secondary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">数据分析技术</h3>
+                    <p class="text-gray-600 mb-4">学习数据分析的基本方法和工具，包括数据清洗、数据可视化和统计分析。</p>
+                    <a href="courses/data-analysis.html" class="text-primary font-medium flex items-center">
+                        查看详情 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- 数据采集与处理 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-database text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">数据采集与处理</h3>
+                    <p class="text-gray-600 mb-4">学习如何从各种数据源采集数据，并进行有效的数据处理和转换。</p>
+                    <a href="courses/data-collection.html" class="text-primary font-medium flex items-center">
+                        查看详情 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- 供应链数据分析 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-truck text-yellow-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">供应链数据分析</h3>
+                    <p class="text-gray-600 mb-4">学习如何应用数据分析技术优化供应链管理，提高供应链效率。</p>
+                    <a href="courses/supply-chain.html" class="text-primary font-medium flex items-center">
+                        查看详情 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- 数据库原理与应用 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-database text-red-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">数据库原理与应用</h3>
+                    <p class="text-gray-600 mb-4">学习数据库的基本原理、SQL语言和数据库设计，掌握数据库应用技能。</p>
+                    <a href="courses/database.html" class="text-primary font-medium flex items-center">
+                        查看详情 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- 更多课程 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-plus text-gray-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">更多课程</h3>
+                    <p class="text-gray-600 mb-4">后续将添加更多课程信息，包括专业核心课程和选修课程。</p>
+                    <a href="courses/more-courses.html" class="text-primary font-medium flex items-center">
+                        查看详情 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">联系我</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fa fa-envelope text-primary"></i>
+                            </div>
+                            <span class="text-gray-700">example@email.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fa fa-phone text-primary"></i>
+                            </div>
+                            <span class="text-gray-700">138****1234</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fa fa-map-marker text-primary"></i>
+                            </div>
+                            <span class="text-gray-700">广东省珠海市金湾区</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-lg font-semibold">许振辉</p>
+                    <p class="text-gray-400">商务数据分析与应用专业</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 许振辉个人页面. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow');
+            } else {
+                nav.classList.remove('shadow');
+            }
+        });
+
+
+    </script>
+</body>
+</html>

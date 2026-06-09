@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更多课程 - 许振辉个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-semibold text-primary">许振辉</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html#home" class="text-gray-600 hover:text-primary transition-colors">首页</a>
+                <a href="../index.html#about" class="text-gray-600 hover:text-primary transition-colors">关于我</a>
+                <a href="../index.html#courses" class="text-gray-600 hover:text-primary transition-colors">课程</a>
+                <a href="../index.html#contact" class="text-gray-600 hover:text-primary transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <section class="bg-gradient-to-r from-primary to-blue-700 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center mb-6">
+                <a href="../index.html#courses" class="text-white hover:text-gray-200 transition-colors mb-6 inline-flex items-center">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回课程列表
+                </a>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">更多课程</h1>
+            <p class="text-xl mb-8">后续将添加更多课程信息，包括专业核心课程和选修课程</p>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose lg:prose-lg">
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程简介</h2>
+                    <p class="text-gray-700 mb-8">
+                        本页面将展示后续添加的更多课程信息，包括专业核心课程和选修课程。
+                        随着学习的深入，我们将不断更新和完善课程内容，为您提供更全面的学习资源。
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">计划添加的课程</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>商务智能与数据分析</li>
+                        <li>数据可视化技术</li>
+                        <li>机器学习基础</li>
+                        <li>大数据分析</li>
+                        <li>商务统计</li>
+                        <li>市场调研与数据分析</li>
+                        <li>财务数据分析</li>
+                        <li>运营数据分析</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程更新计划</h2>
+                    <p class="text-gray-700 mb-8">
+                        我们将按照以下计划更新课程内容：
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>第一阶段：完善核心专业课程</li>
+                        <li>第二阶段：添加选修课程</li>
+                        <li>第三阶段：补充实践项目和案例</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习建议</h2>
+                    <p class="text-gray-700 mb-8">
+                        建议您按照以下顺序学习课程：
+                    </p>
+                    <ol class="list-decimal pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>Python基础</li>
+                        <li>数据库原理与应用</li>
+                        <li>数据采集与处理</li>
+                        <li>数据分析技术</li>
+                        <li>供应链数据分析</li>
+                        <li>其他专业课程</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-lg font-semibold">许振辉</p>
+                    <p class="text-gray-400">商务数据分析与应用专业</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 许振辉个人页面. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow');
+            } else {
+                nav.classList.remove('shadow');
+            }
+        });
+    </script>
+</body>
+</html>

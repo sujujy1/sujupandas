@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析技术 - 许振辉个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-semibold text-primary">许振辉</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html#home" class="text-gray-600 hover:text-primary transition-colors">首页</a>
+                <a href="../index.html#about" class="text-gray-600 hover:text-primary transition-colors">关于我</a>
+                <a href="../index.html#courses" class="text-gray-600 hover:text-primary transition-colors">课程</a>
+                <a href="../index.html#contact" class="text-gray-600 hover:text-primary transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <section class="bg-gradient-to-r from-primary to-blue-700 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center mb-6">
+                <a href="../index.html#courses" class="text-white hover:text-gray-200 transition-colors mb-6 inline-flex items-center">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回课程列表
+                </a>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">数据分析技术</h1>
+            <p class="text-xl mb-8">深入学习数据分析的思维、工具与方法论</p>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose lg:prose-lg">
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程简介</h2>
+                    <p class="text-gray-700 mb-8">
+                        本课程旨在培养学生掌握数据分析的核心思维、工具技能和方法论，
+                        从基础认知到实战应用，构建完整的数据分析知识体系。
+                        通过系统化的学习路径，学生将能够独立完成从数据采集、清洗、分析到可视化的全流程，
+                        并能基于数据洞察提出有价值的业务建议。
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习体系</h2>
+                    
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">第一阶段：筑基——建立数据分析的核心思维与认知（道）</h3>
+                        <p class="text-gray-700 mb-4">
+                            在接触任何工具之前，必须先建立正确的思维模式，这是数据分析的“内功心法”。
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>从“拍脑袋”到“数据驱动”的认知革命：</strong>
+                            首先要完成从“我觉得”到“数据证明”的根本性思维跃迁。
+                            数据分析的本质是“问题导向的解决方案”，其核心逻辑在于 “观察-假设-验证-迭代” 的闭环。
+                            这意味着你需要从被动描述数据（发生了什么），主动进阶到解释原因（为什么发生）、
+                            预测未来（将会怎样）并最终指导行动。
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>掌握四大核心分析思维支柱：</strong>
+                        </p>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-4">
+                            <li><strong>结构化思维（金字塔思维/MECE原则）：</strong>将复杂问题分解为相互独立、完全穷尽的子问题。例如分析销售下滑，可拆解为流量、转化率、客单价三个维度，确保思考全面无遗漏。</li>
+                            <li><strong>假说演绎思维：</strong>先基于业务经验提出假设，再设计分析验证假设，而非盲目地在数据中大海捞针。这能极大提升分析效率与方向感。</li>
+                            <li><strong>指标化思维：</strong>将模糊的业务目标（如“提升用户体验”）转化为具体、可衡量的指标（如“页面加载时间”、“任务完成率”）。关键在于聚焦能反映业务健康度的核心指标（北极星指标），避免数据过载。</li>
+                            <li><strong>维度分析思维：</strong>像使用多棱镜一样，从时间、用户、地域、产品等多个维度交叉观察数据，特别关注异常值，以发现隐藏的模式和洞见。</li>
+                        </ul>
+                        <p class="text-gray-700">
+                            <strong>深耕业务理解：</strong>任何数据分析脱离业务都是空谈。必须深入理解所在行业的价值链、关键利益方和核心痛点。分析的终点不是报告，而是可落地的业务建议，这要求所有分析都需回归业务本质进行解读。
+                        </p>
+                    </div>
+
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">第二阶段：利器——精通核心工具与技能栈（术）</h3>
+                        <p class="text-gray-700 mb-4">
+                            工欲善其事，必先利其器。工具是思维落地的载体，需要循序渐进地掌握。
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>数据分析的“三板斧”：</strong>
+                        </p>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-4">
+                            <li><strong>Excel（高效探查与汇报）：</strong>远非入门工具，而是必备的高效工具。必须精通数据透视表、Power Query（数据清洗）、Power Pivot（数据建模）以及VLOOKUP/INDEX-MATCH等函数组合，用于快速数据探查和制作临时报告。</li>
+                            <li><strong>SQL（数据提取的核心语言）：</strong>从数据库精准提取数据的必备技能。需从基础查询（SELECT, JOIN, GROUP BY）进阶到窗口函数、CTE（公用表表达式）和查询优化，以达到“精通”水平。</li>
+                            <li><strong>Python（自动化与深度分析）：</strong>是实现分析自动化和进行复杂建模的关键。学习路径应聚焦数据分析库：用Pandas进行数据清洗与处理，用NumPy进行数值计算，用Matplotlib/Seaborn进行数据可视化，并初步了解Scikit-learn以接触机器学习模型。</li>
+                        </ul>
+                        <p class="text-gray-700">
+                            <strong>辅助工具（按需拓展）：</strong>
+                            可视化工具：如Tableau、Power BI或FineBI，用于制作交互式仪表板和专业报告，提升成果展示效果。
+                            统计工具：如R语言，在统计分析与可视化方面有独特优势。
+                        </p>
+                    </div>
+
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">第三阶段：导航——掌握系统化分析方法论与模型（法）</h3>
+                        <p class="text-gray-700 mb-4">
+                            拥有思维和工具后，需要标准化的流程和科学的方法来导航整个分析项目。
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>遵循标准分析流程（CRISP-DM模型）：</strong>将以下六个步骤内化为肌肉记忆：
+                        </p>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-4">
+                            <li><strong>业务理解：</strong>明确目标、相关方需求和成功标准。</li>
+                            <li><strong>数据理解：</strong>识别数据来源、类型和质量。</li>
+                            <li><strong>数据准备：</strong>进行数据清洗、集成、转换和特征工程。</li>
+                            <li><strong>建模分析：</strong>根据目标选择分析方法。</li>
+                            <li><strong>评估：</strong>评估结果的可信性与业务适用性。</li>
+                            <li><strong>部署：</strong>将结论转化为可执行的动作清单。</li>
+                        </ul>
+                        <p class="text-gray-700 mb-4">
+                            <strong>构建分析方法工具箱：</strong>针对不同分析目的，灵活选用以下四类方法：
+                        </p>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-4">
+                            <li><strong>描述性分析：</strong>通过均值、标准差、图表等描述现状（What）。</li>
+                            <li><strong>诊断性分析：</strong>通过对比分析、漏斗分析、归因分析（如RFM模型）查找问题根源（Why）。</li>
+                            <li><strong>预测性分析：</strong>运用时间序列分析、回归分析、机器学习模型预测未来趋势（How）。</li>
+                            <li><strong>规范性分析：</strong>利用优化算法（如线性规划）给出最优决策方案（Action）。</li>
+                        </ul>
+                        <p class="text-gray-700">
+                            <strong>夯实统计学与机器学习基础：</strong>这是深化分析能力的理论根基。需要掌握描述性与推断性统计（如假设检验、置信区间）、常见概率分布，并理解机器学习算法（监督学习、无监督学习）的基本原理与应用场景。
+                        </p>
+                    </div>
+
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold text-secondary mb-4">第四阶段：实践与演进——在项目中锤炼，持续学习</h3>
+                        <p class="text-gray-700 mb-4">
+                            数据分析是实践科学，必须在真实场景中完成学习闭环。
+                        </p>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-4">
+                            <li><strong>通过项目实践驱动学习：</strong>这是将知识转化为能力的最重要环节。可以从分析公开数据集（如Kaggle）开始，逐步尝试完整的业务分析项目，例如销售数据分析、用户行为洞察或产品优化评估。务必构建个人项目作品集，这是证明你能力的最佳凭证。</li>
+                            <li><strong>参与竞赛与社区：</strong>在Kaggle等平台参加数据分析竞赛，与全球同行竞技；在GitHub、Stack Overflow、专业论坛等社区交流，能快速提升实战能力并获取最新资讯。</li>
+                            <li><strong>建立持续学习机制：</strong>数据分析领域技术迭代迅速。需要通过在线课程（Coursera, edX）、阅读经典书籍与行业博客、关注前沿研究等方式，不断更新知识体系。</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习目标</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>建立数据驱动的思维模式，掌握数据分析的核心思维方法</li>
+                        <li>熟练使用Excel、SQL和Python等数据分析工具</li>
+                        <li>掌握系统化的数据分析流程和方法</li>
+                        <li>能够独立完成从数据采集到洞察输出的完整分析项目</li>
+                        <li>具备将数据洞察转化为业务建议的能力</li>
+                        <li>建立持续学习和实践的习惯，不断提升分析能力</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程资源</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>推荐书籍：《精益数据分析》、《数据思维》、《Python数据分析》</li>
+                        <li>在线课程：Coursera上的数据分析专项课程</li>
+                        <li>实践平台：Kaggle、GitHub</li>
+                        <li>学习社区：数据分析论坛、技术博客</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-lg font-semibold">许振辉</p>
+                    <p class="text-gray-400">商务数据分析与应用专业</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 许振辉个人页面. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow');
+            } else {
+                nav.classList.remove('shadow');
+            }
+        });
+    </script>
+</body>
+</html>

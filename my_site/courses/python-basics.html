@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python基础 - 许振辉个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-semibold text-primary">许振辉</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html#home" class="text-gray-600 hover:text-primary transition-colors">首页</a>
+                <a href="../index.html#about" class="text-gray-600 hover:text-primary transition-colors">关于我</a>
+                <a href="../index.html#courses" class="text-gray-600 hover:text-primary transition-colors">课程</a>
+                <a href="../index.html#contact" class="text-gray-600 hover:text-primary transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-gray-600">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <section class="bg-gradient-to-r from-primary to-blue-700 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center mb-6">
+                <a href="../index.html#courses" class="text-white hover:text-gray-200 transition-colors mb-6 inline-flex items-center">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回课程列表
+                </a>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">Python基础</h1>
+            <p class="text-xl mb-8">学习Python编程语言的基本语法、数据结构和函数</p>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="prose lg:prose-lg">
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程简介</h2>
+                    <p class="text-gray-700 mb-8">
+                        本课程旨在教授Python编程语言的基础知识，为数据分析和其他编程应用打下坚实的基础。
+                        通过本课程的学习，学生将掌握Python的基本语法、数据结构、函数定义和使用等核心概念，
+                        能够编写简单的Python程序解决实际问题。
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习内容</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>Python环境搭建与配置</li>
+                        <li>基本数据类型（整数、浮点数、字符串、布尔值）</li>
+                        <li>数据结构（列表、元组、字典、集合）</li>
+                        <li>控制流程（条件语句、循环语句）</li>
+                        <li>函数定义与调用</li>
+                        <li>模块与包的使用</li>
+                        <li>文件操作</li>
+                        <li>异常处理</li>
+                        <li>面向对象编程基础</li>
+                        <li>pandas和numpy数据处理库</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">学习目标</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>掌握Python的基本语法和编程规范</li>
+                        <li>能够使用Python的数据结构解决实际问题</li>
+                        <li>理解函数的概念并能够编写自定义函数</li>
+                        <li>能够读写文件和处理异常</li>
+                        <li>了解面向对象编程的基本概念</li>
+                        <li>掌握pandas和numpy的基本操作</li>
+                        <li>为后续的数据分析课程打下基础</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-primary mb-6">课程资源</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700 mb-8">
+                        <li>推荐书籍：《Python编程：从入门到实践》、《Python基础教程》</li>
+                        <li>在线课程：Coursera上的Python专项课程</li>
+                        <li>实践平台：LeetCode、GitHub</li>
+                        <li>学习社区：Stack Overflow、Python官方文档</li>
+                    </ul>
+
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-8 mb-8 text-center">
+                        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-code text-white text-2xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-primary mb-4">开始学习与练习</h2>
+                        <p class="text-gray-700 mb-6">
+                            进入Python学习和练习环境，体验交互式编程学习，通过实践掌握Python技能。
+                        </p>
+                        <a href="python-practice.html" class="bg-primary text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors inline-flex items-center">
+                            进入学习与练习 <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-lg font-semibold">许振辉</p>
+                    <p class="text-gray-400">商务数据分析与应用专业</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400">
+                <p>&copy; 2026 许振辉个人页面. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow');
+            } else {
+                nav.classList.remove('shadow');
+            }
+        });
+    </script>
+</body>
+</html>
